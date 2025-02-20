@@ -10,19 +10,12 @@
   "icon": "assets/recall/icon.png",
   "environment": "*",
   "entrypoints": {
-    "client": [
-      "me.skyquiz.recall.client.RecallClient"
-    ],
     "main": [
       "me.skyquiz.recall.Recall"
     ]
   },
   "mixins": [
-    "recall.mixins.json",
-    {
-      "config": "recall.client.mixins.json",
-      "environment": "client"
-    }
+    "recall.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",

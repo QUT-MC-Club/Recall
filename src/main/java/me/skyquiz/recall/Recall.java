@@ -1,10 +1,8 @@
 package me.skyquiz.recall;
 
-import me.skyquiz.recall.components.ModComponents;
 import me.skyquiz.recall.effects.RecallEffect;
-import me.skyquiz.recall.items.ModItems;
+import me.skyquiz.recall.mixins.BrewingRecipeRegistryMixin;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Items;
@@ -19,28 +17,12 @@ import org.slf4j.LoggerFactory;
 
 public class Recall implements ModInitializer {
     public static final String MOD_ID = "recall";
-
-    // This logger is used to write text to the console and the log file.
-    // It is considered best practice to use your mod id as the logger's name.
-    // That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    public static final RegistryEntry<StatusEffect> RECALL;
+    public static final RegistryEntry<StatusEffect> RECALL_EFFECT = registerStatusEffect("recall", new RecallEffect());
 
-    static {
-        RECALL = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "recall"), new RecallEffect());
-    }
-
-
-    public static final Potion RECALL_POTION = Registry.register(
-                    Registries.POTION,
-                    Identifier.of(MOD_ID, "recall"),
-                    new Potion("recall", new StatusEffectInstance(
-                                            RECALL,
-                                    3600,
-                                    0)));
-
-
+    public static final Potion RECALL_POTION = registerPotion("recall", RECALL_EFFECT);
+    public static final RegistryEntry<Potion> RECALL_POTION_ENTRY = registerPotionEntry("recall", RECALL_POTION);
 
     @Override
     public void onInitialize() {
@@ -50,22 +32,30 @@ public class Recall implements ModInitializer {
 
         LOGGER.info("Hello Fabric world!");
 
-        ModComponents.initialize();
-        ModItems.initialize();
 
-        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
-            builder.registerPotionRecipe(
-                    // Input potion.
-                    Potions.WATER,
-                    // Ingredient
-                    Items.PURPLE_BED,
-                    // Output potion.
-                    Registries.POTION.getEntry(RECALL_POTION)
-            );
-        });
     }
 
-    public void registerPotionRecipes() {
-        //BrewingRecipeRegistryMixin.invokeRegisterPotionRecipe(Potions.AWKWARD, Items.WITHER_ROSE, TATER_POTION);
+    private static RegistryEntry<StatusEffect> registerStatusEffect(String id, StatusEffect effect){
+        return Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID,id), effect);
+    }
+
+    private static Potion registerPotion(String id, RegistryEntry<StatusEffect> effect)
+    {
+        return Registry.register(
+                Registries.POTION,
+                Identifier.of(MOD_ID, id),
+                new Potion("id", new StatusEffectInstance(
+                        effect,
+                        1200,
+                        0)));
+    }
+
+    private static RegistryEntry<Potion> registerPotionEntry(String name, Potion potion)
+    {
+        return Registry.registerReference(Registries.POTION, Identifier.ofVanilla(name), potion);
+    }
+
+    public static void registerPotionsRecipes(){
+        //BrewingRecipeRegistryMixin.invokeRegisterPotionRecipe(Potions.WATER, Items.PURPLE_BED, RECALL_POTION_ENTRY);
     }
 }

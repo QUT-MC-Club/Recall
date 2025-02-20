@@ -1,5 +1,9 @@
 {
   "item.recall.recall_point": "Recall Point",
   "item.recall.recall_point.info": "Recalling to (X, Y, Z) in (World)",
-  "item.recall.recall_scroll": "Recall Scroll"
+  "item.recall.recall_scroll": "Recall Scroll",
+  "effect.recall.recall": "Recalling...",
+  "item.minecraft.potion.effect.recall": "Potion of Recall",
+  "item.minecraft.splash_potion.effect.recall": "Splash Potion of Recall",
+  "item.minecraft.lingering_potion.effect.recall": "Lingering Potion of Recall"
 }
