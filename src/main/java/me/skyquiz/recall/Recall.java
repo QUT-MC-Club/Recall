@@ -1,15 +1,16 @@
 package me.skyquiz.recall;
 
-import me.skyquiz.recall.effects.RecallEffect;
-import me.skyquiz.recall.mixins.BrewingRecipeRegistryMixin;
+import me.skyquiz.recall.item.RecallApple;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.block.ChorusPlantBlock;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.item.Items;
+import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
-import net.minecraft.potion.Potions;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -19,10 +20,18 @@ public class Recall implements ModInitializer {
     public static final String MOD_ID = "recall";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    public static final RegistryEntry<StatusEffect> RECALL_EFFECT = registerStatusEffect("recall", new RecallEffect());
 
-    public static final Potion RECALL_POTION = registerPotion("recall", RECALL_EFFECT);
-    public static final RegistryEntry<Potion> RECALL_POTION_ENTRY = registerPotionEntry("recall", RECALL_POTION);
+    public static final RegistryKey<Item> RECALL_APPLE_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "recall_apple"));
+    public static final Item RECALL_APPLE = register(
+            new RecallApple(new Item.Settings().registryKey(RECALL_APPLE_KEY)),
+            RECALL_APPLE_KEY
+    );
+
+    public static final RegistryKey<Item> RECALL_PEARL_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "recall_pearl"));
+    public static final Item RECALL_PEARL = register(
+            new RecallApple(new Item.Settings().registryKey(RECALL_PEARL_KEY)),
+            RECALL_PEARL_KEY
+    );
 
     @Override
     public void onInitialize() {
@@ -31,31 +40,10 @@ public class Recall implements ModInitializer {
         // Proceed with mild caution.
 
         LOGGER.info("Hello Fabric world!");
-
-
     }
 
-    private static RegistryEntry<StatusEffect> registerStatusEffect(String id, StatusEffect effect){
-        return Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID,id), effect);
+    public static Item register(Item item, RegistryKey<Item> registryKey) {
+        return Registry.register(Registries.ITEM, registryKey.getValue(), item);
     }
 
-    private static Potion registerPotion(String id, RegistryEntry<StatusEffect> effect)
-    {
-        return Registry.register(
-                Registries.POTION,
-                Identifier.of(MOD_ID, id),
-                new Potion("id", new StatusEffectInstance(
-                        effect,
-                        1200,
-                        0)));
-    }
-
-    private static RegistryEntry<Potion> registerPotionEntry(String name, Potion potion)
-    {
-        return Registry.registerReference(Registries.POTION, Identifier.ofVanilla(name), potion);
-    }
-
-    public static void registerPotionsRecipes(){
-        //BrewingRecipeRegistryMixin.invokeRegisterPotionRecipe(Potions.WATER, Items.PURPLE_BED, RECALL_POTION_ENTRY);
-    }
 }
