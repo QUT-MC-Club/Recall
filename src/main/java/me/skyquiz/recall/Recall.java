@@ -1,17 +1,13 @@
 package me.skyquiz.recall;
 
 import me.skyquiz.recall.item.RecallApple;
+import me.skyquiz.recall.item.RecallScroll;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.block.ChorusPlantBlock;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
-import net.minecraft.potion.Potion;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +23,10 @@ public class Recall implements ModInitializer {
             RECALL_APPLE_KEY
     );
 
-    public static final RegistryKey<Item> RECALL_PEARL_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "recall_pearl"));
-    public static final Item RECALL_PEARL = register(
-            new RecallApple(new Item.Settings().registryKey(RECALL_PEARL_KEY)),
-            RECALL_PEARL_KEY
+    public static final RegistryKey<Item> RECALL_SCROLL_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "recall_scroll"));
+    public static final Item RECALL_SCROLL = register(
+            new RecallScroll(new Item.Settings().registryKey(RECALL_SCROLL_KEY)),
+            RECALL_SCROLL_KEY
     );
 
     @Override
