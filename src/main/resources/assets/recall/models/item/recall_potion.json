@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "recall:item/recall_scroll"
+    "layer0": "recall:item/recall_potion"
   }
 }

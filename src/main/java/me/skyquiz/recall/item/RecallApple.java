@@ -1,12 +1,8 @@
 package me.skyquiz.recall.item;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
-import net.minecraft.component.ComponentType;
-import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -14,11 +10,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import xyz.nucleoid.packettweaker.PacketContext;
 
-public class RecallApple extends Item implements PolymerItem {
-    private static FoodComponent RECALL_APPLE_COMPONENT = new FoodComponent.Builder().alwaysEdible().nutrition(1).saturationModifier(0.3f).build();
-
+public class RecallApple extends PotionItem implements PolymerItem {
+    // shapeless - eye of ender + dragons breath + golden apple = 1 recall potion
     public RecallApple(Settings settings) {
-        super(settings.food(RECALL_APPLE_COMPONENT));
+        super(settings);
     }
 
     @Override

@@ -1,5 +1,5 @@
 {
-  "item.recall.recall_apple": "Recall Apple",
+  "item.recall.recall_potion": "Recall Apple",
   "item.recall.recall_scroll": "Recall Scroll",
-  "effect.recall.recall": "Recalling..."
+  "effect.recall.recall": "Recall"
 }
