@@ -1,5 +1,8 @@
 {
-  "item.recall.recall_potion": "Recall Apple",
-  "item.recall.recall_scroll": "Recall Scroll",
-  "effect.recall.recall": "Recall"
+  "item.recall.recall_apple": "Recall Apple",
+  "effect.recall.recall": "Recall",
+  "item.minecraft.lingering_potion.effect.recall": "Lingering Potion of Recalling",
+  "item.minecraft.splash_potion.effect.recall": "Splash Potion of Recalling",
+  "item.minecraft.potion.effect.recall": "Potion of Recalling",
+  "item.minecraft.tipped_arrow.effect.recall": "Tipped Arrow of Recalling"
 }

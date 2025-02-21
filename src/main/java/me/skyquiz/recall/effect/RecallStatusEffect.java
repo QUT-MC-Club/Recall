@@ -2,6 +2,7 @@ package me.skyquiz.recall.effect;
 
 import eu.pb4.polymer.core.api.other.PolymerStatusEffect;
 import me.skyquiz.recall.Recall;
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
@@ -9,12 +10,18 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.consume.TeleportRandomlyConsumeEffect;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
+import oshi.util.platform.windows.WmiUtil;
 import xyz.nucleoid.packettweaker.PacketContext;
+
+import java.util.Random;
 
 public class RecallStatusEffect extends StatusEffect implements PolymerStatusEffect {
     public RecallStatusEffect() {
@@ -47,25 +54,8 @@ public class RecallStatusEffect extends StatusEffect implements PolymerStatusEff
             player.teleport(homeWorld, home.getX(), home.getY(), home.getZ(), PositionFlag.DELTA, player.getYaw(), player.getPitch(), false);
             homeWorld.sendEntityStatus(player, (byte)46);
         } else {
-            PlayerEntity playerEntity = world.getClosestPlayer(entity, 20);
-            if (playerEntity == null) return false;
-
-            ServerPlayerEntity player = world.getServer().getPlayerManager().getPlayer(playerEntity.getUuid());
-            if (player == null) return false;
-
-            BlockPos home = player.getSpawnPointPosition();
-            ServerWorld homeWorld = world.getServer().getWorld(player.getSpawnPointDimension());
-
-            if (home == null) home = player.getServerWorld().getSpawnPos();
-
-            if (homeWorld == null) homeWorld = world.getServer().getWorld(player.getServerWorld().getRegistryKey());
-            if (!(homeWorld instanceof ServerWorld)) return false;
-
-            home.add(0,1, 0);
-
-            world.sendEntityStatus(entity, (byte)46);
-            entity.teleport(homeWorld, home.getX(), home.getY(), home.getZ(), PositionFlag.DELTA, player.getYaw(), player.getPitch(), false);
-            homeWorld.sendEntityStatus(entity, (byte)46);
+            if (!entity.isAlive()) return false;
+            new TeleportRandomlyConsumeEffect(20).onConsume(world, null, entity);
         }
         return super.applyUpdateEffect(world, entity, amplifier);
     }

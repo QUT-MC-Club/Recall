@@ -12,6 +12,9 @@
   "entrypoints": {
     "main": [
       "me.skyquiz.recall.Recall"
+    ],
+    "fabric-datagen": [
+      "me.skyquiz.recall.DataGenInit"
     ]
   },
   "mixins": [

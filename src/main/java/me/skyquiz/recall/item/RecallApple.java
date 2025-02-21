@@ -1,19 +1,32 @@
 package me.skyquiz.recall.item;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
+import net.minecraft.block.ChorusFlowerBlock;
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageEffects;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageSources;
+import net.minecraft.entity.mob.EndermanEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.item.consume.TeleportRandomlyConsumeEffect;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import xyz.nucleoid.packettweaker.PacketContext;
 
-public class RecallApple extends PotionItem implements PolymerItem {
-    // shapeless - eye of ender + dragons breath + golden apple = 1 recall potion
+import java.util.Random;
+
+public class RecallApple extends Item implements PolymerItem {
+    private static final FoodComponent RECALL_APPLE_COMPONENT = new FoodComponent.Builder().alwaysEdible().nutrition(1).saturationModifier(0.3f).build();
+
     public RecallApple(Settings settings) {
-        super(settings);
+        super(settings.food(RECALL_APPLE_COMPONENT));
     }
 
     @Override
@@ -22,22 +35,32 @@ public class RecallApple extends PotionItem implements PolymerItem {
     }
 
     @Override
+    public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+        super.usageTick(world, user, stack, remainingUseTicks);
+    }
+
+    @Override
     public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
         if (user instanceof ServerPlayerEntity player) {
-            BlockPos home = player.getSpawnPointPosition();
-            ServerWorld homeWorld = world.getServer().getWorld(player.getSpawnPointDimension());
+            Random random = new Random();
 
-            if (home == null) home = player.getServerWorld().getSpawnPos();
+            if (random.nextDouble() > 0.6) {
+                BlockPos home = player.getSpawnPointPosition();
+                ServerWorld homeWorld = world.getServer().getWorld(player.getSpawnPointDimension());
 
-            if (homeWorld == null) homeWorld = world.getServer().getWorld(player.getServerWorld().getRegistryKey());
-            if (!(homeWorld instanceof ServerWorld)) return super.finishUsing(stack, world, user);
+                if (home == null) home = player.getServerWorld().getSpawnPos();
 
-            home.add(0, 1, 0);
+                if (homeWorld == null) homeWorld = world.getServer().getWorld(player.getServerWorld().getRegistryKey());
+                if (!(homeWorld instanceof ServerWorld)) return super.finishUsing(stack, world, user);
 
-            world.sendEntityStatus(player, (byte) 46);
-            player.teleport(homeWorld, home.getX(), home.getY(), home.getZ(), PositionFlag.DELTA, player.getYaw(), player.getPitch(), false);
-            homeWorld.sendEntityStatus(player, (byte) 46);
+                home.add(0, 1, 0);
 
+                world.sendEntityStatus(player, (byte) 46);
+                player.teleport(homeWorld, home.getX(), home.getY(), home.getZ(), PositionFlag.DELTA, player.getYaw(), player.getPitch(), false);
+                homeWorld.sendEntityStatus(player, (byte) 46);
+            } else {
+                new TeleportRandomlyConsumeEffect(20).onConsume(world, stack, player);
+            }
             return super.finishUsing(stack, world, user);
         }
         return super.finishUsing(stack, world, user);
