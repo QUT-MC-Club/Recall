@@ -1,5 +1,6 @@
 package me.skyquiz.recall;
 
+import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import me.skyquiz.recall.item.RecallApple;
 import me.skyquiz.recall.item.RecallScroll;
 import net.fabricmc.api.ModInitializer;
@@ -36,6 +37,7 @@ public class Recall implements ModInitializer {
         // Proceed with mild caution.
 
         LOGGER.info("Hello Fabric world!");
+        PolymerResourcePackUtils.addModAssets(MOD_ID);
     }
 
     public static Item register(Item item, RegistryKey<Item> registryKey) {

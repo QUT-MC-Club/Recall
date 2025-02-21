@@ -1,6 +1,7 @@
 package me.skyquiz.recall.item;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
+import net.minecraft.component.ComponentType;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
