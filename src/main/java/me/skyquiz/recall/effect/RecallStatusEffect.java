@@ -2,26 +2,15 @@ package me.skyquiz.recall.effect;
 
 import eu.pb4.polymer.core.api.other.PolymerStatusEffect;
 import me.skyquiz.recall.Recall;
-import net.minecraft.component.type.FoodComponent;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.consume.TeleportRandomlyConsumeEffect;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.Nullable;
-import oshi.util.platform.windows.WmiUtil;
 import xyz.nucleoid.packettweaker.PacketContext;
-
-import java.util.Random;
 
 public class RecallStatusEffect extends StatusEffect implements PolymerStatusEffect {
     public RecallStatusEffect() {

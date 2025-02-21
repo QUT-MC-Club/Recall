@@ -51,16 +51,15 @@ public class Recall implements ModInitializer {
         LOGGER.info("Hello Fabric world!");
         PolymerResourcePackUtils.addModAssets(MOD_ID);
 
-        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
-            builder.registerPotionRecipe(
-                    // Input potion.
-                    Potions.WATER,
-                    // Ingredient
-                    Items.PURPLE_BED,
-                    // Output potion.
-                    Registries.POTION.getEntry(RECALL_POTION)
-            );
-        });
+        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder ->
+                builder.registerPotionRecipe(
+                        // Input potion.
+                        Potions.WATER,
+                        // Ingredient
+                        Items.PURPLE_BED,
+                        // Output potion.
+                        Registries.POTION.getEntry(RECALL_POTION)
+                ));
     }
 
     public static Item register(Item item, RegistryKey<Item> registryKey) {

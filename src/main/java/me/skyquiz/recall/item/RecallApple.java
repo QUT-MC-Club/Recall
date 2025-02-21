@@ -1,21 +1,13 @@
 package me.skyquiz.recall.item;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
-import net.minecraft.block.ChorusFlowerBlock;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageEffects;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageSources;
-import net.minecraft.entity.mob.EndermanEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.item.consume.TeleportRandomlyConsumeEffect;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import xyz.nucleoid.packettweaker.PacketContext;
@@ -46,6 +38,7 @@ public class RecallApple extends Item implements PolymerItem {
 
             if (random.nextDouble() > 0.6) {
                 BlockPos home = player.getSpawnPointPosition();
+                if (world.getServer() == null) return super.finishUsing(stack, world, user);
                 ServerWorld homeWorld = world.getServer().getWorld(player.getSpawnPointDimension());
 
                 if (home == null) home = player.getServerWorld().getSpawnPos();
