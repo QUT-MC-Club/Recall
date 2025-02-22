@@ -11,6 +11,7 @@ import net.minecraft.item.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Rarity;
 import net.minecraft.world.World;
 import xyz.nucleoid.packettweaker.PacketContext;
 
@@ -29,6 +30,7 @@ public class ReturnApple extends SimplePolymerItem {
     public ReturnApple(Settings settings) {
         super(settings
                 .food(RETURN_APPLE_COMPONENT, RETURN_APPLE_CONSUMABLE_COMPONENT)
+                .rarity(Rarity.RARE)
         );
     }
 

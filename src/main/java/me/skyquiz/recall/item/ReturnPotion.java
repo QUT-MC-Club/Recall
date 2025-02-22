@@ -13,10 +13,10 @@ import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Rarity;
 import net.minecraft.world.World;
 import xyz.nucleoid.packettweaker.PacketContext;
 
-import static net.minecraft.item.Items.CARROT_ON_A_STICK;
 import static net.minecraft.item.Items.GLASS_BOTTLE;
 
 public class ReturnPotion extends SimplePolymerItem {
@@ -33,6 +33,7 @@ public class ReturnPotion extends SimplePolymerItem {
         super(settings
                 .maxCount(16)
                 .food(RETURN_POTION_COMPONENT, RETURN_POTION_CONSUMABLE_COMPONENT)
+                .rarity(Rarity.EPIC)
                 .useRemainder(GLASS_BOTTLE));
     }
 
