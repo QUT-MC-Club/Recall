@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "recall:item/recall_apple"
+    "layer0": "recall:item/return_potion"
   }
 }

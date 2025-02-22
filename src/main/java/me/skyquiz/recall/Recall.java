@@ -1,9 +1,11 @@
 package me.skyquiz.recall;
 
-import eu.pb4.polymer.core.api.other.SimplePolymerPotion;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import me.skyquiz.recall.effect.RecallStatusEffect;
-import me.skyquiz.recall.item.RecallApple;
+import me.skyquiz.recall.effect.UnstabilityStatusEffect;
+import me.skyquiz.recall.item.ReturnApple;
+import me.skyquiz.recall.item.ReturnPotion;
+import me.skyquiz.recall.item.UnstabilityPotion;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
 import net.minecraft.entity.effect.StatusEffect;
@@ -25,20 +27,30 @@ public class Recall implements ModInitializer {
     public static final String MOD_ID = "recall";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+    // CONFIG VALUES
+    public static final double TELEPORT_CHANCE = 0.4;
+    public static final int TIME_TO_TP_TICKS = 100;
 
-    public static final RegistryKey<Item> RECALL_APPLE_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "recall_apple"));
-    public static final Item RECALL_APPLE = register(
-            new RecallApple(new Item.Settings().registryKey(RECALL_APPLE_KEY)),
-            RECALL_APPLE_KEY
-    );
 
+    public static final RegistryKey<Item> RETURN_APPLE_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "return_apple"));
+    public static final Item RETURN_APPLE = register(new ReturnApple(new Item.Settings().registryKey(RETURN_APPLE_KEY)), RETURN_APPLE_KEY);
+
+    public static final RegistryKey<Item> RETURN_POTION_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "return_potion"));
+    public static final Item RETURN_POTION = register(new ReturnPotion(new Item.Settings().registryKey(RETURN_POTION_KEY)), RETURN_POTION_KEY);
+
+    public static final Potion UNSTABILITY_POTION;
     public static final RegistryEntry<StatusEffect> RECALL;
-    public static final Potion RECALL_POTION;
+    public static final RegistryEntry<StatusEffect> UNSTABILITY;
+
+
 
     static {
         RECALL = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "recall"), new RecallStatusEffect());
-        RECALL_POTION = Registry.register(Registries.POTION, Identifier.of(MOD_ID, "recall_potion"), new SimplePolymerPotion("recall", new StatusEffectInstance(RECALL, 100, 0)));
+        UNSTABILITY = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "unstability"), new UnstabilityStatusEffect());
+        UNSTABILITY_POTION = Registry.register(Registries.POTION, Identifier.of(MOD_ID, "unstability_potion"), new UnstabilityPotion());
     }
+
+
 
 
 
@@ -49,18 +61,21 @@ public class Recall implements ModInitializer {
         // Proceed with mild caution.
 
         LOGGER.info("Hello Fabric world!");
-        PolymerResourcePackUtils.addModAssets(MOD_ID);
+        boolean valid = PolymerResourcePackUtils.addModAssets(MOD_ID);
+        if (valid) LOGGER.info("Added Resources");
 
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder ->
                 builder.registerPotionRecipe(
                         // Input potion.
-                        Potions.WATER,
+                        Potions.AWKWARD,
                         // Ingredient
-                        Items.PURPLE_BED,
+                        Items.CHORUS_FRUIT,
                         // Output potion.
-                        Registries.POTION.getEntry(RECALL_POTION)
+                        Registries.POTION.getEntry(UNSTABILITY_POTION)
                 ));
     }
+
+
 
     public static Item register(Item item, RegistryKey<Item> registryKey) {
         return Registry.register(Registries.ITEM, registryKey.getValue(), item);

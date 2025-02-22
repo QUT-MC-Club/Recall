@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.recipe.RecipeExporter;
 import net.minecraft.data.recipe.RecipeGenerator;
+import net.minecraft.data.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.data.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
@@ -25,12 +26,29 @@ public class RecallRecipeProvider extends FabricRecipeProvider {
             public void generate() {
                 RegistryWrapper.Impl<Item> itemLookup = registries.getOrThrow(RegistryKeys.ITEM);
 
-                ShapelessRecipeJsonBuilder.create(itemLookup, RecipeCategory.BREWING, Recall.RECALL_APPLE, 1)
-                        .input(Items.ENDER_EYE)
-                        .input(Items.DRAGON_BREATH)
-                        .input(Items.CHORUS_FRUIT)
-                        .criterion(hasItem(Items.DRAGON_BREATH), conditionsFromItem(Items.DRAGON_BREATH))
+                ShapedRecipeJsonBuilder.create(itemLookup, RecipeCategory.BREWING, Recall.RETURN_APPLE, 1)
+                        .pattern("xxx")
+                        .pattern("xox")
+                        .pattern("xxx")
+
+                        .input('x', Items.CHORUS_FRUIT)
+                        .input('o', Items.GOLDEN_APPLE)
+                        .group("multi_bench")
+                        .criterion(hasItem(Items.CHORUS_FRUIT), conditionsFromItem(Items.CHORUS_FRUIT))
                         .offerTo(exporter);
+
+                ShapedRecipeJsonBuilder.create(itemLookup, RecipeCategory.BREWING, Recall.RETURN_POTION, 1)
+                        .pattern("xxx")
+                        .pattern("xox")
+                        .pattern("xxx")
+
+                        .input('x', Recall.RETURN_APPLE)
+                        .input('o', Items.DRAGON_BREATH)
+                        .group("multi_bench")
+                        .criterion(hasItem(Recall.RETURN_APPLE), conditionsFromItem(Recall.RETURN_APPLE))
+                        .offerTo(exporter);
+
+
             }
         };
     }

@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "recall:item/recall_apple"
+    "model": "recall:item/return_apple"
   }
 }
