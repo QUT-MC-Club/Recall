@@ -69,7 +69,7 @@ public class Recall implements ModInitializer {
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder ->
                 builder.registerPotionRecipe(
                         // Input potion.
-                        Potions.THICK,
+                        Potions.AWKWARD,
                         // Ingredient
                         RETURN_APPLE,
                         // Output potion.
