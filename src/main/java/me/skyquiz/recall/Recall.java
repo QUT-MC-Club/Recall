@@ -1,5 +1,6 @@
 package me.skyquiz.recall;
 
+import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils;
 import eu.pb4.polymer.core.api.other.SimplePolymerPotion;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import me.skyquiz.recall.effect.RecallStatusEffect;
@@ -7,12 +8,11 @@ import me.skyquiz.recall.effect.UnstabilityStatusEffect;
 import me.skyquiz.recall.item.ReturnApple;
 import me.skyquiz.recall.item.ReturnPotion;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroups;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.Potions;
@@ -21,6 +21,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,18 +79,15 @@ public class Recall implements ModInitializer {
 
         // Get the event for modifying entries in the ingredients group.
         // And register an event handler that adds our suspicious item to the ingredients group.
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK)
-                .register((itemGroup) -> {
-                            itemGroup.add(RETURN_APPLE);
-                            itemGroup.add(RETURN_POTION);
-//                            itemGroup.add(PotionContentsComponent.createStack(Items.POTION, )));
-//                            itemGroup.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, ));
-//                            itemGroup.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, ));
-//                            itemGroup.add(PotionContentsComponent.createStack(Items.TIPPED_ARROW,  ));
-                        }
-                );
-    }
+        PolymerItemGroupUtils.registerPolymerItemGroup(Identifier.of(MOD_ID, "recall"), ItemGroup.create(ItemGroup.Row.BOTTOM, -1)
+                .icon(RETURN_APPLE::getDefaultStack)
+                .displayName(Text.translatable("itemgroup." + MOD_ID))
+                .entries(((displayContext, entries) -> {
+                    entries.add(RETURN_APPLE);
+                    entries.add(RETURN_POTION);
+                })).build());
 
+    }
 
 
     public static Item register(Item item, RegistryKey<Item> registryKey) {

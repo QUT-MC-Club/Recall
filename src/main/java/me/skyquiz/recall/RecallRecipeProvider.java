@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.recipe.RecipeExporter;
 import net.minecraft.data.recipe.RecipeGenerator;
 import net.minecraft.data.recipe.ShapedRecipeJsonBuilder;
-import net.minecraft.data.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.book.RecipeCategory;
@@ -32,7 +31,7 @@ public class RecallRecipeProvider extends FabricRecipeProvider {
                         .pattern("xxx")
 
                         .input('x', Items.CHORUS_FRUIT)
-                        .input('o', Items.GOLDEN_APPLE)
+                        .input('o', Items.APPLE)
                         .group("multi_bench")
                         .criterion(hasItem(Items.CHORUS_FRUIT), conditionsFromItem(Items.CHORUS_FRUIT))
                         .offerTo(exporter);

@@ -1,9 +1,11 @@
 {
   "item.recall.return_apple": "Return Apple",
   "item.recall.return_potion": "Return Potion",
+  "effect.recall.recall": "Recall",
   "effect.recall.unstability": "Spatial Instability",
   "item.minecraft.potion.effect.unstability": "Potion of Spatial Instability",
   "item.minecraft.splash_potion.effect.unstability": "Splash Potion of Spatial Instability",
   "item.minecraft.lingering_potion.effect.unstability": "Lingering Potion of Spatial Instability",
-  "item.minecraft.tipped_arrow.effect.unstability": "Tipped Arrow of Spatial Instability"
+  "item.minecraft.tipped_arrow.effect.unstability": "Tipped Arrow of Spatial Instability",
+  "itemgroup.recall": "Recall Items"
 }

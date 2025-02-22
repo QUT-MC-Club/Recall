@@ -1,6 +1,7 @@
 package me.skyquiz.recall.effect;
 
 import eu.pb4.polymer.core.api.other.PolymerStatusEffect;
+import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import me.skyquiz.recall.Recall;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -11,6 +12,8 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.consume.TeleportRandomlyConsumeEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
@@ -33,8 +36,14 @@ public class RecallStatusEffect extends StatusEffect implements PolymerStatusEff
 
     @Override
     public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
-        entity.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 2400));
-        entity.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 100, 1));
+        if (Recall.TIME_TO_TP_TICKS == timeLeft) {
+            if (entity instanceof ServerPlayerEntity player) {
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, Recall.TIME_TO_TP_TICKS + 60, 1));
+                player.playSoundToPlayer(SoundEvents.BLOCK_PORTAL_TRIGGER, SoundCategory.MASTER, 5, 1);
+                entity.playSound(SoundEvents.BLOCK_PORTAL_TRIGGER, 1, 1);
+            }
+        }
+
         if (getTimeLeft() <= 1) {
             if (entity instanceof ServerPlayerEntity player) {
                 Random random = Random.create();
@@ -46,8 +55,7 @@ public class RecallStatusEffect extends StatusEffect implements PolymerStatusEff
 
                     if (home == null) home = player.getServerWorld().getSpawnPos();
 
-                    if (homeWorld == null)
-                        homeWorld = world.getServer().getWorld(player.getServerWorld().getRegistryKey());
+                    if (homeWorld == null) homeWorld = world.getServer().getWorld(player.getServerWorld().getRegistryKey());
                     if (!(homeWorld instanceof ServerWorld)) return false;
 
                     home = home.mutableCopy().add(0, 1, 0);
@@ -74,12 +82,22 @@ public class RecallStatusEffect extends StatusEffect implements PolymerStatusEff
     @Override
     public void onEntityDamage(ServerWorld world, LivingEntity entity, int amplifier, DamageSource source, float amount) {
         entity.removeStatusEffect(Recall.RECALL);
+        entity.removeStatusEffect(StatusEffects.NAUSEA);
+    }
+
+    @Override
+    public void onApplied(LivingEntity entity, int amplifier) {
     }
 
     @Override
     public StatusEffect getPolymerReplacement(PacketContext context)
     {
-        return StatusEffects.NAUSEA.value();
+        if (context.getPlayer() == null) return StatusEffects.NAUSEA.value();
+        if (PolymerResourcePackUtils.hasPack(context.getPlayer(), context.getPlayer().getUuid())) {
+            return Recall.RECALL.value();
+        } else {
+            return StatusEffects.LUCK.value();
+        }
     }
 
     public int getTimeLeft() {

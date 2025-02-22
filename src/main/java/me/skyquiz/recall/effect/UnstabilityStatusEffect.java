@@ -1,39 +1,35 @@
 package me.skyquiz.recall.effect;
 
 import eu.pb4.polymer.core.api.other.PolymerStatusEffect;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.consume.TeleportRandomlyConsumeEffect;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.packettweaker.PacketContext;
 
 public class UnstabilityStatusEffect extends StatusEffect implements PolymerStatusEffect {
-    private int timeLeft;
-
     public UnstabilityStatusEffect() {
         super(StatusEffectCategory.HARMFUL, 0xB438FF);
     }
 
     @Override
-    public boolean canApplyUpdateEffect(int duration, int amplifier) {
-        timeLeft = duration;
+    public boolean isInstant() {
         return true;
     }
 
     @Override
-    public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
-        if (timeLeft <= 1) {
+    public void applyInstantEffect(ServerWorld world, @Nullable Entity effectEntity, @Nullable Entity attacker, net.minecraft.entity.LivingEntity target, int amplifier, double proximity) {
+        if (effectEntity instanceof ServerPlayerEntity entity) {
             new TeleportRandomlyConsumeEffect(20 + 10 * (amplifier + 1)).onConsume(world, null, entity);
         }
-
-        return super.applyUpdateEffect(world, entity, amplifier);
     }
 
     @Override
-    public StatusEffect getPolymerReplacement(PacketContext context)
-    {
+    public StatusEffect getPolymerReplacement(PacketContext context) {
         return StatusEffects.NAUSEA.value();
     }
 }
