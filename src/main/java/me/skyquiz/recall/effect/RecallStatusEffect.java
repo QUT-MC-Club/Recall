@@ -54,7 +54,7 @@ public class RecallStatusEffect extends StatusEffect implements PolymerStatusEff
 
                     world.sendEntityStatus(player, (byte) 46);
                     TeleportTarget target = new TeleportTarget(
-                            world,
+                            homeWorld,
                             home.toCenterPos(),
                             Vec3d.ZERO,
                             player.getYaw(),
