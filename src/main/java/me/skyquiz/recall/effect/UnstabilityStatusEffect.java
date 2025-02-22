@@ -13,7 +13,7 @@ public class UnstabilityStatusEffect extends StatusEffect implements PolymerStat
     private int timeLeft;
 
     public UnstabilityStatusEffect() {
-        super(StatusEffectCategory.HARMFUL, 0x5900FF);
+        super(StatusEffectCategory.HARMFUL, 0xB438FF);
     }
 
     @Override
