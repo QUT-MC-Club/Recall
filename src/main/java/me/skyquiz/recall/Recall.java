@@ -1,5 +1,6 @@
 package me.skyquiz.recall;
 
+import com.thedeathlycow.vaulted.end.VaultedEnd;
 import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils;
 import eu.pb4.polymer.core.api.other.SimplePolymerPotion;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
@@ -8,11 +9,19 @@ import me.skyquiz.recall.effect.UnstabilityStatusEffect;
 import me.skyquiz.recall.item.ReturnApple;
 import me.skyquiz.recall.item.ReturnPotion;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
+import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.Items;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.entry.ItemEntry;
+import net.minecraft.loot.function.SetCountLootFunction;
+import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
+import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.Potions;
 import net.minecraft.registry.Registries;
@@ -47,6 +56,7 @@ public class Recall implements ModInitializer {
     public static final Potion UNSTABILITY_POTION;
 
 
+
     static {
         RECALL = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "recall"), new RecallStatusEffect());
         UNSTABILITY = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "unstability"), new UnstabilityStatusEffect());
@@ -66,6 +76,8 @@ public class Recall implements ModInitializer {
         boolean valid = PolymerResourcePackUtils.addModAssets(MOD_ID);
         if (valid) LOGGER.info("Added Resources");
 
+        RegistryEntry<Potion> unstability_entry = Registries.POTION.getEntry(UNSTABILITY_POTION);
+
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder ->
                 builder.registerPotionRecipe(
                         // Input potion.
@@ -73,7 +85,7 @@ public class Recall implements ModInitializer {
                         // Ingredient
                         RETURN_APPLE,
                         // Output potion.
-                        Registries.POTION.getEntry(UNSTABILITY_POTION)
+                        unstability_entry
                 ));
 
         // Get the event for modifying entries in the ingredients group.
@@ -84,8 +96,34 @@ public class Recall implements ModInitializer {
                 .entries(((displayContext, entries) -> {
                     entries.add(RETURN_APPLE);
                     entries.add(RETURN_POTION);
+                    entries.add(PotionContentsComponent.createStack(Items.POTION, unstability_entry));
+                    entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, unstability_entry));
+                    entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, unstability_entry));
+                    entries.add(PotionContentsComponent.createStack(Items.TIPPED_ARROW, unstability_entry));
                 })).build());
 
+
+        LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
+            if (key.getValue().equals(Identifier.of(VaultedEnd.MOD_ID, "vaults/normal/elytra"))) {
+                // We make the pool and add an item
+                LootPool.Builder poolBuilder = LootPool.builder()
+                        .rolls(ConstantLootNumberProvider.create(1))
+                        .with(ItemEntry.builder(RETURN_APPLE))
+                        .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0f, 4.0f)).build());
+                tableBuilder.pool(poolBuilder);
+            }
+        });
+
+        LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
+            if (key.getValue().equals(Identifier.of(VaultedEnd.MOD_ID, "vaults/ominous/elytra"))) {
+                // We make the pool and add an item
+                LootPool.Builder poolBuilder = LootPool.builder()
+                                .rolls(ConstantLootNumberProvider.create(1))
+                                .with(ItemEntry.builder(RETURN_POTION))
+                                .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0f, 2.0f)).build());
+                tableBuilder.pool(poolBuilder);
+            }
+        });
     }
 
 

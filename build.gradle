@@ -29,6 +29,18 @@ repositories {
     // for more information about repositories.
 
     maven { url 'https://maven.nucleoid.xyz' } // You should have it
+
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
 }
 
 dependencies {
@@ -39,10 +51,13 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modImplementation include("eu.pb4:polymer-core:0.11.7+1.21.4")
-    modImplementation include("eu.pb4:polymer-resource-pack:0.11.7+1.21.4")
+    modImplementation include("eu.pb4:polymer-core:${project.polymer_version}")
+    modImplementation include("eu.pb4:polymer-resource-pack:${project.polymer_version}")
+
+    modImplementation include("eu.pb4:polymer-autohost:${project.polymer_version}")
 
     modImplementation include("eu.pb4:polydex:1.4.1+1.21.4")
+    modImplementation include("maven.modrinth:vaulted-end:1.2.1")
 }
 
 processResources {
