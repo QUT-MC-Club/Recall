@@ -4,7 +4,6 @@ import eu.pb4.polymer.core.api.other.PolymerStatusEffect;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.consume.TeleportRandomlyConsumeEffect;
 import net.minecraft.server.world.ServerWorld;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +26,6 @@ public class UnstabilityStatusEffect extends StatusEffect implements PolymerStat
 
     @Override
     public StatusEffect getPolymerReplacement(PacketContext context) {
-        return StatusEffects.NAUSEA.value();
+        return null;
     }
 }

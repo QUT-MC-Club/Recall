@@ -40,7 +40,7 @@ public class Recall implements ModInitializer {
 
     // CONFIG VALUES
     public static final double TELEPORT_CHANCE = 0.4;
-    public static final int TIME_TO_TP_TICKS = 100;
+    public static final int TIME_TO_TP_TICKS = 1;
 
 
     public static final RegistryKey<Item> RETURN_APPLE_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "return_apple"));
