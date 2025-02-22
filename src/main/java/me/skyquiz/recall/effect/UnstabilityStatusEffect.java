@@ -6,7 +6,6 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.consume.TeleportRandomlyConsumeEffect;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.packettweaker.PacketContext;
@@ -23,9 +22,7 @@ public class UnstabilityStatusEffect extends StatusEffect implements PolymerStat
 
     @Override
     public void applyInstantEffect(ServerWorld world, @Nullable Entity effectEntity, @Nullable Entity attacker, net.minecraft.entity.LivingEntity target, int amplifier, double proximity) {
-        if (effectEntity instanceof ServerPlayerEntity entity) {
-            new TeleportRandomlyConsumeEffect(20 + 10 * (amplifier + 1)).onConsume(world, null, entity);
-        }
+        new TeleportRandomlyConsumeEffect(20 + 10 * (amplifier + 1)).onConsume(world, null, target);
     }
 
     @Override

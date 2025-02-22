@@ -31,7 +31,7 @@ public class RecallRecipeProvider extends FabricRecipeProvider {
                         .pattern("xxx")
 
                         .input('x', Items.CHORUS_FRUIT)
-                        .input('o', Items.APPLE)
+                        .input('o', Items.GOLDEN_APPLE)
                         .group("multi_bench")
                         .criterion(hasItem(Items.CHORUS_FRUIT), conditionsFromItem(Items.CHORUS_FRUIT))
                         .offerTo(exporter);

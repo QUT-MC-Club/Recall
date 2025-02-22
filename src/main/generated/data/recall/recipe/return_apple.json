@@ -3,7 +3,7 @@
   "category": "misc",
   "group": "multi_bench",
   "key": {
-    "o": "minecraft:golden_apple",
+    "o": "minecraft:apple",
     "x": "minecraft:chorus_fruit"
   },
   "pattern": [
