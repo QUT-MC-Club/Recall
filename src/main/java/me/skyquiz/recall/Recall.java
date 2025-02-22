@@ -1,5 +1,6 @@
 package me.skyquiz.recall;
 
+import eu.pb4.polymer.core.api.other.SimplePolymerPotion;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import me.skyquiz.recall.effect.RecallStatusEffect;
 import me.skyquiz.recall.effect.UnstabilityStatusEffect;
@@ -45,13 +46,15 @@ public class Recall implements ModInitializer {
     public static final RegistryEntry<StatusEffect> RECALL;
     public static final RegistryEntry<StatusEffect> UNSTABILITY;
 
-    public static final RegistryEntry<Potion> UNSTABILITY_POTION_ENTRY;
+    public static final Potion UNSTABILITY_POTION;
 
 
     static {
         RECALL = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "recall"), new RecallStatusEffect());
         UNSTABILITY = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "unstability"), new UnstabilityStatusEffect());
-        UNSTABILITY_POTION_ENTRY = Registry.registerReference(Registries.POTION, Identifier.of(MOD_ID, "unstability_potion"), new Potion("unstability", new StatusEffectInstance(UNSTABILITY, 100, 0)));
+        UNSTABILITY_POTION = Registry.register(Registries.POTION, Identifier.of(MOD_ID, "unstability"),
+                new SimplePolymerPotion("unstability", new StatusEffectInstance(Recall.UNSTABILITY, Recall.TIME_TO_TP_TICKS, 0))
+        );
     }
 
 
@@ -72,7 +75,7 @@ public class Recall implements ModInitializer {
                         // Ingredient
                         Items.CHORUS_FRUIT,
                         // Output potion.
-                        UNSTABILITY_POTION_ENTRY
+                        Registries.POTION.getEntry(new UnstabilityPotion())
                 ));
 
         // Get the event for modifying entries in the ingredients group.
@@ -81,10 +84,10 @@ public class Recall implements ModInitializer {
                 .register((itemGroup) -> {
                             itemGroup.add(RETURN_APPLE);
                             itemGroup.add(RETURN_POTION);
-                            itemGroup.add(PotionContentsComponent.createStack(Items.POTION, UNSTABILITY_POTION_ENTRY));
-                            itemGroup.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, UNSTABILITY_POTION_ENTRY));
-                            itemGroup.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, UNSTABILITY_POTION_ENTRY));
-                            itemGroup.add(PotionContentsComponent.createStack(Items.TIPPED_ARROW, UNSTABILITY_POTION_ENTRY));
+//                            itemGroup.add(PotionContentsComponent.createStack(Items.POTION, )));
+//                            itemGroup.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, ));
+//                            itemGroup.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, ));
+//                            itemGroup.add(PotionContentsComponent.createStack(Items.TIPPED_ARROW,  ));
                         }
                 );
     }
