@@ -7,10 +7,13 @@ import me.skyquiz.recall.item.ReturnApple;
 import me.skyquiz.recall.item.ReturnPotion;
 import me.skyquiz.recall.item.UnstabilityPotion;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
+import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroups;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.Potions;
@@ -38,20 +41,18 @@ public class Recall implements ModInitializer {
     public static final RegistryKey<Item> RETURN_POTION_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "return_potion"));
     public static final Item RETURN_POTION = register(new ReturnPotion(new Item.Settings().registryKey(RETURN_POTION_KEY)), RETURN_POTION_KEY);
 
-    public static final Potion UNSTABILITY_POTION;
+
     public static final RegistryEntry<StatusEffect> RECALL;
     public static final RegistryEntry<StatusEffect> UNSTABILITY;
 
+    public static final RegistryEntry<Potion> UNSTABILITY_POTION_ENTRY;
 
 
     static {
         RECALL = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "recall"), new RecallStatusEffect());
         UNSTABILITY = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "unstability"), new UnstabilityStatusEffect());
-        UNSTABILITY_POTION = Registry.register(Registries.POTION, Identifier.of(MOD_ID, "unstability_potion"), new UnstabilityPotion());
+        UNSTABILITY_POTION_ENTRY = Registry.registerReference(Registries.POTION, Identifier.of(MOD_ID, "unstability_potion"), new Potion("unstability", new StatusEffectInstance(UNSTABILITY, 100, 0)));
     }
-
-
-
 
 
     @Override
@@ -71,8 +72,21 @@ public class Recall implements ModInitializer {
                         // Ingredient
                         Items.CHORUS_FRUIT,
                         // Output potion.
-                        Registries.POTION.getEntry(UNSTABILITY_POTION)
+                        UNSTABILITY_POTION_ENTRY
                 ));
+
+        // Get the event for modifying entries in the ingredients group.
+        // And register an event handler that adds our suspicious item to the ingredients group.
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK)
+                .register((itemGroup) -> {
+                            itemGroup.add(RETURN_APPLE);
+                            itemGroup.add(RETURN_POTION);
+                            itemGroup.add(PotionContentsComponent.createStack(Items.POTION, UNSTABILITY_POTION_ENTRY));
+                            itemGroup.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, UNSTABILITY_POTION_ENTRY));
+                            itemGroup.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, UNSTABILITY_POTION_ENTRY));
+                            itemGroup.add(PotionContentsComponent.createStack(Items.TIPPED_ARROW, UNSTABILITY_POTION_ENTRY));
+                        }
+                );
     }
 
 
