@@ -79,7 +79,7 @@ public class RecallStatusEffect extends StatusEffect implements PolymerStatusEff
     @Override
     public StatusEffect getPolymerReplacement(PacketContext context)
     {
-        return StatusEffects.DARKNESS.value();
+        return StatusEffects.NAUSEA.value();
     }
 
     public int getTimeLeft() {

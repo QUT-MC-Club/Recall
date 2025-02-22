@@ -6,11 +6,9 @@ import me.skyquiz.recall.effect.RecallStatusEffect;
 import me.skyquiz.recall.effect.UnstabilityStatusEffect;
 import me.skyquiz.recall.item.ReturnApple;
 import me.skyquiz.recall.item.ReturnPotion;
-import me.skyquiz.recall.item.UnstabilityPotion;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
-import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
@@ -75,7 +73,7 @@ public class Recall implements ModInitializer {
                         // Ingredient
                         Items.CHORUS_FRUIT,
                         // Output potion.
-                        Registries.POTION.getEntry(new UnstabilityPotion())
+                        Registries.POTION.getEntry(UNSTABILITY_POTION)
                 ));
 
         // Get the event for modifying entries in the ingredients group.
