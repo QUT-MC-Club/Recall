@@ -7,5 +7,10 @@
   "item.minecraft.splash_potion.effect.unstability": "Splash Potion of Spatial Instability",
   "item.minecraft.lingering_potion.effect.unstability": "Lingering Potion of Spatial Instability",
   "item.minecraft.tipped_arrow.effect.unstability": "Tipped Arrow of Spatial Instability",
-  "itemgroup.recall": "Recall Items"
+  "itemgroup.recall": "Recall Items",
+
+  "item.minecraft.potion.effect.strong_unstability": "Potion of Spatial Instability II",
+  "item.minecraft.splash_potion.effect.strong_unstability": "Splash Potion of Spatial Instability II",
+  "item.minecraft.lingering_potion.effect.strong_unstability": "Lingering Potion of Spatial Instability II",
+  "item.minecraft.tipped_arrow.effect.strong_unstability": "Tipped Arrow of Spatial Instability II"
 }

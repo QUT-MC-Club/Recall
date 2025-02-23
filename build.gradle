@@ -30,6 +30,15 @@ repositories {
 
     maven { url 'https://maven.nucleoid.xyz' } // You should have it
 
+    maven { url = 'https://jitpack.io' }
+
+    maven {
+        url = "https://maven.jamieswhiteshirt.com/libs-release/"
+        content {
+            includeGroup 'com.jamieswhiteshirt'
+        }
+    }
+
     exclusiveContent {
         forRepository {
             maven {
@@ -58,6 +67,9 @@ dependencies {
 
     modImplementation include("eu.pb4:polydex:1.4.1+1.21.4")
     modCompileOnly include("maven.modrinth:vaulted-end:1.2.1")
+
+    modImplementation include("com.jamieswhiteshirt:rtree-3i-lite-fabric:0.3.0")
+    modCompileOnly include("maven.modrinth:goml-reserved:1.15.0+1.21.4-rc3")
 }
 
 processResources {

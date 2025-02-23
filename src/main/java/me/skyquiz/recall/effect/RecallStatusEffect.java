@@ -38,9 +38,8 @@ public class RecallStatusEffect extends StatusEffect implements PolymerStatusEff
     public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
         if (Recall.TIME_TO_TP_TICKS == timeLeft) {
             if (entity instanceof ServerPlayerEntity player) {
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, Recall.TIME_TO_TP_TICKS + 60, 1));
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, Recall.TIME_TO_TP_TICKS + 60, 1, false, false));
                 player.playSoundToPlayer(SoundEvents.BLOCK_PORTAL_TRIGGER, SoundCategory.MASTER, 5, 1);
-                entity.playSound(SoundEvents.BLOCK_PORTAL_TRIGGER, 1, 1);
             }
         }
 
@@ -92,11 +91,14 @@ public class RecallStatusEffect extends StatusEffect implements PolymerStatusEff
     @Override
     public StatusEffect getPolymerReplacement(PacketContext context)
     {
-        if (context.getPlayer() == null) return StatusEffects.NAUSEA.value();
+        if (context.getPlayer() == null) {
+            Recall.LOGGER.info("Player not found");
+            return StatusEffects.NAUSEA.value();
+        }
         if (PolymerResourcePackUtils.hasPack(context.getPlayer(), context.getPlayer().getUuid())) {
             return Recall.RECALL.value();
         } else {
-            return StatusEffects.LUCK.value();
+            return StatusEffects.NAUSEA.value();
         }
     }
 
