@@ -39,7 +39,7 @@ public class Recall implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     // CONFIG VALUES
-    public static final double TELEPORT_CHANCE = 0.4;
+    public static final double TELEPORT_CHANCE = 0.25;
     public static final int TIME_TO_TP_TICKS = 100;
 
 

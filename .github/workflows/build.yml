@@ -22,7 +22,7 @@ jobs:
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: create datagen
-        run: ./gradlew runDatagen  --refresh-dependencies
+        run: ./gradlew runDatagen
       - name: build
         run: ./gradlew build
       - name: capture build artifacts
