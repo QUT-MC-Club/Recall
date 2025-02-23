@@ -51,18 +51,18 @@ public class Recall implements ModInitializer {
 
 
     public static final RegistryEntry<StatusEffect> RECALL;
-    public static final RegistryEntry<StatusEffect> UNSTABILITY;
-
-    public static final Potion UNSTABILITY_POTION;
+//    public static final RegistryEntry<StatusEffect> UNSTABILITY;
+//
+//    public static final Potion UNSTABILITY_POTION;
 
 
 
     static {
         RECALL = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "recall"), new RecallStatusEffect());
-        UNSTABILITY = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "unstability"), new UnstabilityStatusEffect());
-        UNSTABILITY_POTION = Registry.register(Registries.POTION, Identifier.of(MOD_ID, "unstability"),
-                new SimplePolymerPotion("unstability", new StatusEffectInstance(Recall.UNSTABILITY, Recall.TIME_TO_TP_TICKS, 0))
-        );
+//        UNSTABILITY = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "unstability"), new UnstabilityStatusEffect());
+//        UNSTABILITY_POTION = Registry.register(Registries.POTION, Identifier.of(MOD_ID, "unstability"),
+//                new SimplePolymerPotion("unstability", new StatusEffectInstance(Recall.UNSTABILITY, Recall.TIME_TO_TP_TICKS, 0))
+//        );
     }
 
 
@@ -76,17 +76,17 @@ public class Recall implements ModInitializer {
         boolean valid = PolymerResourcePackUtils.addModAssets(MOD_ID);
         if (valid) LOGGER.info("Added Resources");
 
-        RegistryEntry<Potion> unstability_entry = Registries.POTION.getEntry(UNSTABILITY_POTION);
+//        RegistryEntry<Potion> unstability_entry = Registries.POTION.getEntry(UNSTABILITY_POTION);
 
-        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder ->
-                builder.registerPotionRecipe(
-                        // Input potion.
-                        Potions.AWKWARD,
-                        // Ingredient
-                        RETURN_APPLE,
-                        // Output potion.
-                        unstability_entry
-                ));
+//        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder ->
+//                builder.registerPotionRecipe(
+//                        // Input potion.
+//                        Potions.AWKWARD,
+//                        // Ingredient
+//                        RETURN_APPLE,
+//                        // Output potion.
+//                        unstability_entry
+//                ));
 
         // Get the event for modifying entries in the ingredients group.
         // And register an event handler that adds our suspicious item to the ingredients group.
@@ -96,10 +96,10 @@ public class Recall implements ModInitializer {
                 .entries(((displayContext, entries) -> {
                     entries.add(RETURN_APPLE);
                     entries.add(RETURN_POTION);
-                    entries.add(PotionContentsComponent.createStack(Items.POTION, unstability_entry));
-                    entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, unstability_entry));
-                    entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, unstability_entry));
-                    entries.add(PotionContentsComponent.createStack(Items.TIPPED_ARROW, unstability_entry));
+//                    entries.add(PotionContentsComponent.createStack(Items.POTION, unstability_entry));
+//                    entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, unstability_entry));
+//                    entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, unstability_entry));
+//                    entries.add(PotionContentsComponent.createStack(Items.TIPPED_ARROW, unstability_entry));
                 })).build());
 
 

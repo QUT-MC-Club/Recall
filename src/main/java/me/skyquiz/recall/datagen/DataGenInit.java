@@ -9,6 +9,6 @@ public class DataGenInit implements DataGeneratorEntrypoint {
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
         var pack = fabricDataGenerator.createPack();
 
-        //pack.addProvider(RecallRecipeProvider::new);
+        pack.addProvider(RecallRecipeProvider::new);
     }
 }
