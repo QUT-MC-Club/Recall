@@ -57,7 +57,7 @@ dependencies {
     modImplementation include("eu.pb4:polymer-autohost:${project.polymer_version}")
 
     modImplementation include("eu.pb4:polydex:1.4.1+1.21.4")
-    modImplementation include("maven.modrinth:vaulted-end:1.2.1")
+    modCompileOnly include("maven.modrinth:vaulted-end:1.2.1")
 }
 
 processResources {

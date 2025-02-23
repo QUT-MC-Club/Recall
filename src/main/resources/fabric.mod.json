@@ -17,9 +17,6 @@
       "me.skyquiz.recall.DataGenInit"
     ]
   },
-  "mixins": [
-    "recall.mixins.json"
-  ],
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
