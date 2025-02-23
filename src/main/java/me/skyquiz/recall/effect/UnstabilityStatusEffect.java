@@ -8,6 +8,7 @@ import eu.pb4.polymer.core.api.other.PolymerStatusEffect;
 import com.jamieswhiteshirt.rtree3i.Entry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.InstantStatusEffect;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.passive.FoxEntity;
@@ -24,7 +25,7 @@ import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.packettweaker.PacketContext;
 
-public class UnstabilityStatusEffect extends StatusEffect implements PolymerStatusEffect {
+public class UnstabilityStatusEffect extends InstantStatusEffect implements PolymerStatusEffect {
     public UnstabilityStatusEffect() {
         super(StatusEffectCategory.HARMFUL, 0xB438FF);
     }
@@ -35,14 +36,24 @@ public class UnstabilityStatusEffect extends StatusEffect implements PolymerStat
     }
 
     @Override
+    public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
+        if (ClaimUtils.getClaimsAt(world, entity.getBlockPos()).isEmpty()) {
+            teleportEntitySafely(20 + 10 * (amplifier + 1), world, entity);
+        } else {
+            world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT);
+        }
+        return true;
+    }
+
+    @Override
     public void applyInstantEffect(ServerWorld world, @Nullable Entity effectEntity, @Nullable Entity attacker, net.minecraft.entity.LivingEntity target, int amplifier, double proximity) {
         if (attacker == null) return;
-        if (!(attacker instanceof LivingEntity livingEntity)) return;
+        if (!(attacker instanceof LivingEntity)) return;
 
-        if (ClaimUtils.canDamageEntity(world, target, world.getDamageSources().mobAttack(livingEntity))) {
+        if (ClaimUtils.getClaimsAt(world, target.getBlockPos()).isEmpty()) {
             teleportEntitySafely(20 + 10 * (amplifier + 1), world, target);
         } else {
-            world.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, SoundCategory.AMBIENT);
+            world.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT);
         }
     }
 
@@ -84,8 +95,6 @@ public class UnstabilityStatusEffect extends StatusEffect implements PolymerStat
                 break;
             }
         }
-        world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, SoundCategory.AMBIENT);
-        user.teleport(user.getX(), user.getY(), user.getZ(), true);
 
         if (bl && user instanceof PlayerEntity playerEntity) {
             playerEntity.clearCurrentExplosion();

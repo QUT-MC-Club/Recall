@@ -23,9 +23,21 @@ import xyz.nucleoid.packettweaker.PacketContext;
 
 public class RecallStatusEffect extends StatusEffect implements PolymerStatusEffect {
     private int timeLeft;
-
+    private boolean active;
+    private boolean playedCancelSfx;
     public RecallStatusEffect() {
         super(StatusEffectCategory.NEUTRAL, 0xe9b8b3);
+    }
+
+    @Override
+    public void playApplySound(LivingEntity entity, int amplifier) {
+        active = true;
+        playedCancelSfx = false;
+
+        if (entity instanceof ServerPlayerEntity player) {
+            player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, Recall.TIME_TO_TP_TICKS + 60, 1, false, false));
+            player.playSoundToPlayer(SoundEvents.BLOCK_PORTAL_TRIGGER, SoundCategory.MASTER, 5, 1);
+        }
     }
 
     @Override
@@ -36,56 +48,60 @@ public class RecallStatusEffect extends StatusEffect implements PolymerStatusEff
 
     @Override
     public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
-        if (Recall.TIME_TO_TP_TICKS == timeLeft) {
-            if (entity instanceof ServerPlayerEntity player) {
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, Recall.TIME_TO_TP_TICKS + 60, 1, false, false));
-                player.playSoundToPlayer(SoundEvents.BLOCK_PORTAL_TRIGGER, SoundCategory.MASTER, 5, 1);
+        if (entity instanceof ServerPlayerEntity player) {
+            if (!active && !playedCancelSfx) {
+                world.playSound(null, entity.getBlockPos(), SoundEvents.ENTITY_ALLAY_DEATH, SoundCategory.AMBIENT, 1, 3);
+                if (player.hasStatusEffect(StatusEffects.NAUSEA)) player.removeStatusEffect(StatusEffects.NAUSEA);
+                playedCancelSfx = true;
             }
         }
+
 
         if (getTimeLeft() <= 1) {
             if (entity instanceof ServerPlayerEntity player) {
                 Random random = Random.create();
+                Recall.LOGGER.info(String.valueOf(active));
+                if (!active) {
+                    player.playSoundToPlayer(SoundEvents.ENTITY_ALLAY_DEATH, SoundCategory.AMBIENT, 1, 3);
+                    return true;
+                }
+
                 if (amplifier < 1 && random.nextDouble() >= Recall.TELEPORT_CHANCE) {
                     new TeleportRandomlyConsumeEffect(20).onConsume(world, null, entity);
-                } else {
-                    BlockPos home = player.getSpawnPointPosition();
-                    ServerWorld homeWorld = world.getServer().getWorld(player.getSpawnPointDimension());
-
-                    if (home == null) home = player.getServerWorld().getSpawnPos();
-
-                    if (homeWorld == null) homeWorld = world.getServer().getWorld(player.getServerWorld().getRegistryKey());
-                    if (!(homeWorld instanceof ServerWorld)) return false;
-
-                    home = home.mutableCopy().add(0, 1, 0);
-
-                    world.sendEntityStatus(player, (byte) 46);
-                    TeleportTarget target = new TeleportTarget(
-                            homeWorld,
-                            home.toCenterPos(),
-                            Vec3d.ZERO,
-                            player.getYaw(),
-                            player.getPitch(),
-                            TeleportTarget.SEND_TRAVEL_THROUGH_PORTAL_PACKET
-                    );
-                    player.fallDistance = 0;
-                    player.teleportTo(target);
-                    homeWorld.sendEntityStatus(player, (byte) 46);
+                    return true;
                 }
+
+                BlockPos home = player.getSpawnPointPosition();
+                ServerWorld homeWorld = world.getServer().getWorld(player.getSpawnPointDimension());
+
+                if (home == null) home = player.getServerWorld().getSpawnPos();
+
+                if (homeWorld == null) homeWorld = world.getServer().getWorld(player.getServerWorld().getRegistryKey());
+                if (!(homeWorld instanceof ServerWorld)) return false;
+
+                home = home.mutableCopy().add(0, 1, 0);
+
+                world.sendEntityStatus(player, (byte) 46);
+                TeleportTarget target = new TeleportTarget(
+                        homeWorld,
+                        home.toCenterPos(),
+                        Vec3d.ZERO,
+                        player.getYaw(),
+                        player.getPitch(),
+                        TeleportTarget.SEND_TRAVEL_THROUGH_PORTAL_PACKET
+                );
+                player.fallDistance = 0;
+                player.teleportTo(target);
+                homeWorld.sendEntityStatus(player, (byte) 46);
             }
         }
 
-        return super.applyUpdateEffect(world, entity, amplifier);
+        return true;
     }
 
     @Override
     public void onEntityDamage(ServerWorld world, LivingEntity entity, int amplifier, DamageSource source, float amount) {
-        entity.removeStatusEffect(Recall.RECALL);
-        entity.removeStatusEffect(StatusEffects.NAUSEA);
-    }
-
-    @Override
-    public void onApplied(LivingEntity entity, int amplifier) {
+        if (entity.hasStatusEffect(Recall.RECALL)) active = false;
     }
 
     @Override
