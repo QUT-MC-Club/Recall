@@ -7,7 +7,6 @@ import draylar.goml.api.*;
 import draylar.goml.registry.GOMLBlocks;
 import eu.pb4.polymer.core.api.other.PolymerStatusEffect;
 import com.jamieswhiteshirt.rtree3i.Entry;
-import me.skyquiz.recall.Recall;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.InstantStatusEffect;
@@ -31,8 +30,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class UnstabilityStatusEffect extends InstantStatusEffect implements PolymerStatusEffect {
-    public UnstabilityStatusEffect() {
+public class InstabilityStatusEffect extends InstantStatusEffect implements PolymerStatusEffect {
+    public InstabilityStatusEffect() {
         super(StatusEffectCategory.HARMFUL, 0xB438FF);
     }
 
@@ -42,11 +41,14 @@ public class UnstabilityStatusEffect extends InstantStatusEffect implements Poly
     }
 
     @Override
-    public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
-        if (ClaimUtils.getClaimsAt(world, entity.getBlockPos()).isEmpty()) {
-            teleportEntitySafely(20 + 10 * (amplifier + 1), world, entity);
+    public boolean applyUpdateEffect(ServerWorld world, LivingEntity target, int amplifier) {
+        LivingEntity attacker = target.getAttacker();
+        boolean permitted = canEntityTeleport(world, target, attacker);
+
+        if (permitted) {
+            teleportEntitySafely(20 + 10 * (amplifier + 1), world, target);
         } else {
-            world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT);
+            world.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT);
         }
         return true;
     }
@@ -56,6 +58,22 @@ public class UnstabilityStatusEffect extends InstantStatusEffect implements Poly
         if (attacker == null) return;
         if (!(attacker instanceof LivingEntity)) return;
 
+        boolean permitted = canEntityTeleport(world, target, (LivingEntity) attacker);
+
+        if (permitted) {
+            teleportEntitySafely(20 + 10 * (amplifier + 1), world, target);
+        } else {
+            world.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT);
+        }
+    }
+
+    @Override
+    public StatusEffect getPolymerReplacement(PacketContext context) {
+        return null;
+    }
+
+
+    private boolean canEntityTeleport(ServerWorld world, LivingEntity target, LivingEntity attacker) {
         var claimOdds = ClaimUtils.getClaimsAt(world, target.getBlockPos());
         AtomicBoolean permitted = new AtomicBoolean(false);
         if (claimOdds.isEmpty()) { // Not within claim
@@ -102,20 +120,8 @@ public class UnstabilityStatusEffect extends InstantStatusEffect implements Poly
                 }
             }));
         }
-
-        Recall.LOGGER.info(String.valueOf(permitted.get()));
-        if (permitted.get()) {
-            teleportEntitySafely(20 + 10 * (amplifier + 1), world, target);
-        } else {
-            world.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT);
-        }
+        return permitted.get();
     }
-
-    @Override
-    public StatusEffect getPolymerReplacement(PacketContext context) {
-        return null;
-    }
-
 
     private void teleportEntitySafely(float diameter, World world, LivingEntity user) {
         boolean bl = false;
@@ -151,6 +157,7 @@ public class UnstabilityStatusEffect extends InstantStatusEffect implements Poly
                 break;
             }
         }
+        user.playSound(SoundEvents.ENTITY_VILLAGER_NO);
 
         if (bl && user instanceof PlayerEntity playerEntity) {
             playerEntity.clearCurrentExplosion();

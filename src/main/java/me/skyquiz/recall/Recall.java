@@ -5,7 +5,7 @@ import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils;
 import eu.pb4.polymer.core.api.other.SimplePolymerPotion;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import me.skyquiz.recall.effect.RecallStatusEffect;
-import me.skyquiz.recall.effect.UnstabilityStatusEffect;
+import me.skyquiz.recall.effect.InstabilityStatusEffect;
 import me.skyquiz.recall.item.ReturnApple;
 import me.skyquiz.recall.item.ReturnPotion;
 import net.fabricmc.api.ModInitializer;
@@ -51,19 +51,19 @@ public class Recall implements ModInitializer {
 
 
     public static final RegistryEntry<StatusEffect> RECALL;
-    public static final RegistryEntry<StatusEffect> UNSTABILITY;
+    public static final RegistryEntry<StatusEffect> INSTABILITY;
 
-    public static final Potion UNSTABILITY_POTION;
-    public static final Potion STRONG_UNSTABILITY_POTION;
+    public static final Potion INSTABILITY_POTION;
+    public static final Potion STRONG_INSTABILITY_POTION;
 
     static {
         RECALL = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "recall"), new RecallStatusEffect());
-        UNSTABILITY = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "unstability"), new UnstabilityStatusEffect());
-        UNSTABILITY_POTION = Registry.register(Registries.POTION, Identifier.of(MOD_ID, "unstability"),
-                new SimplePolymerPotion("unstability", new StatusEffectInstance(Recall.UNSTABILITY, 1, 0))
+        INSTABILITY = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "instability"), new InstabilityStatusEffect());
+        INSTABILITY_POTION = Registry.register(Registries.POTION, Identifier.of(MOD_ID, "instability"),
+                new SimplePolymerPotion("instability", new StatusEffectInstance(Recall.INSTABILITY, 1, 0))
         );
-        STRONG_UNSTABILITY_POTION = Registry.register(Registries.POTION, Identifier.of(MOD_ID, "strong_unstability"),
-                new SimplePolymerPotion("strong_unstability", new StatusEffectInstance(Recall.UNSTABILITY, 1, 1))
+        STRONG_INSTABILITY_POTION = Registry.register(Registries.POTION, Identifier.of(MOD_ID, "strong_instability"),
+                new SimplePolymerPotion("strong_instability", new StatusEffectInstance(Recall.INSTABILITY, 1, 1))
         );
     }
 
@@ -78,8 +78,8 @@ public class Recall implements ModInitializer {
         boolean valid = PolymerResourcePackUtils.addModAssets(MOD_ID);
         if (valid) LOGGER.info("Added Resources");
 
-        RegistryEntry<Potion> unstability_entry = Registries.POTION.getEntry(UNSTABILITY_POTION);
-        RegistryEntry<Potion> strong_unstability_entry = Registries.POTION.getEntry(STRONG_UNSTABILITY_POTION);
+        RegistryEntry<Potion> instability_entry = Registries.POTION.getEntry(INSTABILITY_POTION);
+        RegistryEntry<Potion> strong_instability_entry = Registries.POTION.getEntry(STRONG_INSTABILITY_POTION);
 
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder ->
                 builder.registerPotionRecipe(
@@ -88,16 +88,16 @@ public class Recall implements ModInitializer {
                         // Ingredient
                         Items.CHORUS_FRUIT,
                         // Output potion.
-                        unstability_entry
+                        instability_entry
                 ));
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder ->
                 builder.registerPotionRecipe(
                         // Input potion.
-                        unstability_entry,
+                        instability_entry,
                         // Ingredient
                         Items.GLOWSTONE_DUST,
                         // Output potion.
-                        strong_unstability_entry
+                        strong_instability_entry
                 ));
 
 
@@ -109,14 +109,14 @@ public class Recall implements ModInitializer {
                 .entries(((displayContext, entries) -> {
                     entries.add(RETURN_APPLE);
                     entries.add(RETURN_POTION);
-                    entries.add(PotionContentsComponent.createStack(Items.POTION, unstability_entry));
-                    entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, unstability_entry));
-                    entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, unstability_entry));
-                    entries.add(PotionContentsComponent.createStack(Items.TIPPED_ARROW, unstability_entry));
-                    entries.add(PotionContentsComponent.createStack(Items.POTION, strong_unstability_entry));
-                    entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, strong_unstability_entry));
-                    entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, strong_unstability_entry));
-                    entries.add(PotionContentsComponent.createStack(Items.TIPPED_ARROW, strong_unstability_entry));
+                    entries.add(PotionContentsComponent.createStack(Items.POTION, instability_entry));
+                    entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, instability_entry));
+                    entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, instability_entry));
+                    entries.add(PotionContentsComponent.createStack(Items.TIPPED_ARROW, instability_entry));
+                    entries.add(PotionContentsComponent.createStack(Items.POTION, strong_instability_entry));
+                    entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, strong_instability_entry));
+                    entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, strong_instability_entry));
+                    entries.add(PotionContentsComponent.createStack(Items.TIPPED_ARROW, strong_instability_entry));
                 })).build());
 
 
