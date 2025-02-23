@@ -19,8 +19,8 @@ public class RecallRecipeProvider extends FabricRecipeProvider {
     }
 
     @Override
-    protected RecipeGenerator getRecipeGenerator(RegistryWrapper.WrapperLookup wrapperLookup, RecipeExporter exporter) {
-        return new RecipeGenerator(wrapperLookup, exporter) {
+    protected RecipeGenerator getRecipeGenerator(RegistryWrapper.WrapperLookup wrapperLookup, RecipeExporter recipeExporter) {
+        return new RecipeGenerator(wrapperLookup, recipeExporter) {
             @Override
             public void generate() {
                 RegistryWrapper.Impl<Item> itemLookup = registries.getOrThrow(RegistryKeys.ITEM);
@@ -34,7 +34,7 @@ public class RecallRecipeProvider extends FabricRecipeProvider {
                         .input('o', Items.GOLDEN_APPLE)
                         .group("multi_bench")
                         .criterion(hasItem(Items.CHORUS_FRUIT), conditionsFromItem(Items.CHORUS_FRUIT))
-                        .offerTo(exporter);
+                        .offerTo(recipeExporter);
 
                 ShapedRecipeJsonBuilder.create(itemLookup, RecipeCategory.BREWING, Recall.RETURN_POTION, 1)
                         .pattern("xxx")
@@ -45,7 +45,7 @@ public class RecallRecipeProvider extends FabricRecipeProvider {
                         .input('o', Items.DRAGON_BREATH)
                         .group("multi_bench")
                         .criterion(hasItem(Recall.RETURN_APPLE), conditionsFromItem(Recall.RETURN_APPLE))
-                        .offerTo(exporter);
+                        .offerTo(recipeExporter);
 
 
             }
