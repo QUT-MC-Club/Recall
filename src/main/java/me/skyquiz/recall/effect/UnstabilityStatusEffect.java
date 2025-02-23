@@ -4,8 +4,6 @@ import com.jamieswhiteshirt.rtree3i.Box;
 import com.jamieswhiteshirt.rtree3i.Selection;
 import draylar.goml.GetOffMyLawn;
 import draylar.goml.api.*;
-import draylar.goml.block.SelectiveClaimAugmentBlock;
-import draylar.goml.other.StatusEnum;
 import draylar.goml.registry.GOMLBlocks;
 import eu.pb4.polymer.core.api.other.PolymerStatusEffect;
 import com.jamieswhiteshirt.rtree3i.Entry;
@@ -45,7 +43,6 @@ public class UnstabilityStatusEffect extends InstantStatusEffect implements Poly
 
     @Override
     public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
-        Recall.LOGGER.info("Ran Update Effect");
         if (ClaimUtils.getClaimsAt(world, entity.getBlockPos()).isEmpty()) {
             teleportEntitySafely(20 + 10 * (amplifier + 1), world, entity);
         } else {
@@ -62,13 +59,11 @@ public class UnstabilityStatusEffect extends InstantStatusEffect implements Poly
         var claimOdds = ClaimUtils.getClaimsAt(world, target.getBlockPos());
         AtomicBoolean permitted = new AtomicBoolean(false);
         if (claimOdds.isEmpty()) { // Not within claim
-            Recall.LOGGER.info("NOCLAIM - true");
             permitted.set(true);
         } else { // Within Claim
-            // TODO: Add way to get single claim to work with
             var testedClaim = claimOdds.filter((Entry<ClaimBox, Claim> claim) -> { // Test for specific claim hit was in
                 BlockPos pos = target.getBlockPos();
-                Box checkBox = Box.create(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
+                Box checkBox = Box.create(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
                 return claim.getKey().toBox().intersectionVolume(checkBox) == 1;
             });
 
@@ -79,42 +74,30 @@ public class UnstabilityStatusEffect extends InstantStatusEffect implements Poly
                 Set<UUID> trustedPlayers = claim.getTrusted();
 
                 if (attacker instanceof PlayerEntity) { // Attacker is player
-                    if (owners.contains(attacker.getUuid()) || trustedPlayers.contains(attacker.getUuid())) { // attacker is owner or trusted
-                        Recall.LOGGER.info("TRUST - true");
+                    if (owners.contains(attacker.getUuid()) || trustedPlayers.  contains(attacker.getUuid())) { // attacker is owner or trusted
                         permitted.set(true);
                         return;
                     }
                     if (target instanceof PlayerEntity) { // target is player
+                        if (attacker.getUuid().equals(target.getUuid())) { // self-cast
+                            permitted.set(true);
+                            return;
+                        }
                         if (claim.hasAugment(GOMLBlocks.PVP_ARENA.getFirst())) { // claim has pvp-arena
                             switch (claim.getData(GOMLBlocks.PVP_ARENA.getFirst().key)) {
-                                case EVERYONE -> {
-                                    Recall.LOGGER.info("PVP/ALL - true");
-                                    permitted.set(true);
-                                }
-                                case DISABLED -> {
-                                    Recall.LOGGER.info("PVP/DENY - false");
-                                    permitted.set(false);
-                                }
-                                case TRUSTED -> {
-                                    Recall.LOGGER.info("PVP/TRUST - " + claim.hasPermission((PlayerEntity) attacker) + " / " + claim.hasPermission((PlayerEntity) target));
-                                    permitted.set(claim.hasPermission((PlayerEntity) attacker) && claim.hasPermission((PlayerEntity) target));
-                                }
-                                case UNTRUSTED -> {
-                                    Recall.LOGGER.info("PVP/UNTRUST - " + !claim.hasPermission((PlayerEntity) attacker) + " / " + !claim.hasPermission((PlayerEntity) target));
-                                    permitted.set(!claim.hasPermission((PlayerEntity) attacker) && !claim.hasPermission((PlayerEntity) target));
-                                }
+                                case EVERYONE -> permitted.set(true);
+                                case DISABLED -> permitted.set(false);
+                                case TRUSTED -> permitted.set(claim.hasPermission((PlayerEntity) attacker) && claim.hasPermission((PlayerEntity) target));
+                                case UNTRUSTED -> permitted.set(!claim.hasPermission((PlayerEntity) attacker) && !claim.hasPermission((PlayerEntity) target));
                                 case null, default -> throw new MatchException(null, null);
                             }
                         } else { // claim does not have pvp arena
-                            Recall.LOGGER.info("PVP/NOAUG - " + GetOffMyLawn.CONFIG.enablePvPinClaims);
                             permitted.set(GetOffMyLawn.CONFIG.enablePvPinClaims);
                         }
                     } else { // target is non-player (animal, armor stand, etc...)
-                        Recall.LOGGER.info("NON-PLAYER+CLAIM - false");
                         permitted.set(false);
                     }
                 } else { // Attacker is non-player (probably dispensers or witches, if one will choose to be evil)
-                    Recall.LOGGER.info("NON-PLAYER - true");
                     permitted.set(true);
                 }
             }));
@@ -147,7 +130,9 @@ public class UnstabilityStatusEffect extends InstantStatusEffect implements Poly
 
             Vec3d vec3d = user.getPos();
             Selection<Entry<ClaimBox, Claim>> claims = ClaimUtils.getClaimsAt(world, new BlockPos((int) d, (int) e, (int) f));
-            if (!claims.isEmpty()) continue;
+            if (claims.isNotEmpty()) {
+                continue;
+            }
             if (user.teleport(d, e, f, true)) {
                 world.emitGameEvent(GameEvent.TELEPORT, vec3d, GameEvent.Emitter.of(user));
                 SoundCategory soundCategory;
