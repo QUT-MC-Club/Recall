@@ -14,9 +14,10 @@
       "me.skyquiz.recall.Recall"
     ],
     "fabric-datagen": [
-      "me.skyquiz.recall.DataGenInit"
+      "me.skyquiz.recall.datagen.DataGenInit"
     ]
   },
+  "mixins": [],
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
