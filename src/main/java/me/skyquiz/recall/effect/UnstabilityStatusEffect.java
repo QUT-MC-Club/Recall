@@ -12,7 +12,6 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.passive.FoxEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -41,7 +40,7 @@ public class UnstabilityStatusEffect extends StatusEffect implements PolymerStat
         if (!(attacker instanceof LivingEntity livingEntity)) return;
 
         if (ClaimUtils.canDamageEntity(world, target, world.getDamageSources().mobAttack(livingEntity))) {
-            teleportEntitySafely(20 + 10 * (amplifier + 1), world, null, target);
+            teleportEntitySafely(20 + 10 * (amplifier + 1), world, target);
         } else {
             world.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, SoundCategory.AMBIENT);
         }
@@ -53,12 +52,12 @@ public class UnstabilityStatusEffect extends StatusEffect implements PolymerStat
     }
 
 
-    private void teleportEntitySafely(float diameter, World world, ItemStack stack, LivingEntity user) {
+    private void teleportEntitySafely(float diameter, World world, LivingEntity user) {
         boolean bl = false;
 
         for(int i = 0; i < 16; ++i) {
             double d = user.getX() + (user.getRandom().nextDouble() - (double)0.5F) * (double) diameter;
-            double e = MathHelper.clamp(user.getY() + (user.getRandom().nextDouble() - (double)0.5F) * (double) diameter, (double)world.getBottomY(), (double)(world.getBottomY() + ((ServerWorld)world).getLogicalHeight() - 1));
+            double e = MathHelper.clamp(user.getY() + (user.getRandom().nextDouble() - (double)0.5F) * (double) diameter, world.getBottomY(), world.getBottomY() + ((ServerWorld)world).getLogicalHeight() - 1);
             double f = user.getZ() + (user.getRandom().nextDouble() - (double)0.5F) * (double) diameter;
             if (user.hasVehicle()) {
                 user.stopRiding();
@@ -79,7 +78,7 @@ public class UnstabilityStatusEffect extends StatusEffect implements PolymerStat
                     soundCategory = SoundCategory.PLAYERS;
                 }
 
-                world.playSound((PlayerEntity)null, user.getX(), user.getY(), user.getZ(), soundEvent, soundCategory);
+                world.playSound(null, user.getX(), user.getY(), user.getZ(), soundEvent, soundCategory);
                 user.onLanding();
                 bl = true;
                 break;
