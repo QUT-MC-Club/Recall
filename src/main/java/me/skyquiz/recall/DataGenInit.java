@@ -1,6 +1,5 @@
-package me.skyquiz.recall.datagen;
+package me.skyquiz.recall;
 
-import me.skyquiz.recall.RecallRecipeProvider;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
