@@ -37,9 +37,9 @@ public class RecallRecipeProvider extends FabricRecipeProvider {
                         .offerTo(recipeExporter);
 
                 ShapedRecipeJsonBuilder.create(itemLookup, RecipeCategory.BREWING, Recall.RETURN_POTION, 1)
-                        .pattern("xxx")
+                        .pattern(" x ")
                         .pattern("xox")
-                        .pattern("xxx")
+                        .pattern(" x ")
 
                         .input('x', Recall.RETURN_APPLE)
                         .input('o', Items.DRAGON_BREATH)
