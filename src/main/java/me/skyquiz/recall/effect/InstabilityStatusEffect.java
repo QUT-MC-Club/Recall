@@ -7,6 +7,7 @@ import draylar.goml.api.*;
 import draylar.goml.registry.GOMLBlocks;
 import eu.pb4.polymer.core.api.other.PolymerStatusEffect;
 import com.jamieswhiteshirt.rtree3i.Entry;
+import me.skyquiz.recall.Recall;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.InstantStatusEffect;
@@ -42,7 +43,7 @@ public class InstabilityStatusEffect extends InstantStatusEffect implements Poly
 
     @Override
     public boolean canApplyUpdateEffect(int duration, int amplifier) {
-        return duration % 4 == 0;
+        return duration % Recall.INSTABILITY_TELEPORT_TICK == 0;
     }
 
     @Override
