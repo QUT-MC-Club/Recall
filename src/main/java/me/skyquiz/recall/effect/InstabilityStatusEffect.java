@@ -41,6 +41,11 @@ public class InstabilityStatusEffect extends InstantStatusEffect implements Poly
     }
 
     @Override
+    public boolean canApplyUpdateEffect(int duration, int amplifier) {
+        return duration % 4 == 0;
+    }
+
+    @Override
     public boolean applyUpdateEffect(ServerWorld world, LivingEntity target, int amplifier) {
         LivingEntity attacker = target.getAttacker();
         boolean permitted = canEntityTeleport(world, target, attacker);
