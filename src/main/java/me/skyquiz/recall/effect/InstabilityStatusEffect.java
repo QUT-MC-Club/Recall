@@ -136,12 +136,12 @@ public class InstabilityStatusEffect extends InstantStatusEffect implements Poly
 
             Vec3d vec3d = target.getPos();
 
-            Selection<Entry<ClaimBox, Claim>> interactingClaimsOriginal = ClaimUtils.getClaimsAt(world, source.getBlockPos());
-            if (interactingClaimsOriginal.isNotEmpty()) {
-                if ((!ClaimUtils.canDamageEntity(world, target, world.getDamageSources().mobAttack(source)))) {
-                    continue;
-                }
-            }
+//            Selection<Entry<ClaimBox, Claim>> interactingClaimsOriginal = ClaimUtils.getClaimsAt(world, source.getBlockPos());
+//            if (interactingClaimsOriginal.isNotEmpty()) {
+//                if ((!ClaimUtils.canDamageEntity(world, target, world.getDamageSources().mobAttack(source)))) {
+//                    continue;
+//                }
+//            }
 
 
             Selection<Entry<ClaimBox, Claim>> interactingClaims = ClaimUtils.getClaimsAt(world, new BlockPos((int) d, (int) e, (int) f));
