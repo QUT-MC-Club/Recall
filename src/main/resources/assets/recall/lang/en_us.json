@@ -12,5 +12,8 @@
   "item.minecraft.potion.effect.strong_instability": "Potion of Spatial Instability II",
   "item.minecraft.splash_potion.effect.strong_instability": "Splash Potion of Spatial Instability II",
   "item.minecraft.lingering_potion.effect.strong_instability": "Lingering Potion of Spatial Instability II",
-  "item.minecraft.tipped_arrow.effect.strong_instability": "Tipped Arrow of Spatial Instability II"
+  "item.minecraft.tipped_arrow.effect.strong_instability": "Tipped Arrow of Spatial Instability II",
+
+  "item.recall.return_apple.tooltip": "Occasionally takes you home",
+  "item.recall.return_potion.tooltip": "Guaranteed to take you home"
 }
