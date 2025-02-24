@@ -46,7 +46,7 @@ public class InstabilityStatusEffect extends InstantStatusEffect implements Poly
         boolean permitted = canEntityTeleport(world, target, attacker);
 
         if (permitted) {
-            teleportEntitySafely(20 + 10 * (amplifier + 1), world, target);
+            teleportEntitySafely(20 + 10 * (amplifier + 1), world, target, attacker);
         } else {
             world.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT);
         }
@@ -61,7 +61,7 @@ public class InstabilityStatusEffect extends InstantStatusEffect implements Poly
         boolean permitted = canEntityTeleport(world, target, (LivingEntity) attacker);
 
         if (permitted) {
-            teleportEntitySafely(20 + 10 * (amplifier + 1), world, target);
+            teleportEntitySafely(20 + 10 * (amplifier + 1), world, target, (LivingEntity) attacker);
         } else {
             world.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT);
         }
@@ -123,27 +123,29 @@ public class InstabilityStatusEffect extends InstantStatusEffect implements Poly
         return permitted.get();
     }
 
-    private void teleportEntitySafely(float diameter, World world, LivingEntity user) {
+    private void teleportEntitySafely(float diameter, World world, LivingEntity target, LivingEntity source) {
         boolean bl = false;
 
         for(int i = 0; i < 16; ++i) {
-            double d = user.getX() + (user.getRandom().nextDouble() - (double)0.5F) * (double) diameter;
-            double e = MathHelper.clamp(user.getY() + (user.getRandom().nextDouble() - (double)0.5F) * (double) diameter, world.getBottomY(), world.getBottomY() + ((ServerWorld)world).getLogicalHeight() - 1);
-            double f = user.getZ() + (user.getRandom().nextDouble() - (double)0.5F) * (double) diameter;
-            if (user.hasVehicle()) {
-                user.stopRiding();
+            double d = target.getX() + (target.getRandom().nextDouble() - (double)0.5F) * (double) diameter;
+            double e = MathHelper.clamp(target.getY() + (target.getRandom().nextDouble() - (double)0.5F) * (double) diameter, world.getBottomY(), world.getBottomY() + ((ServerWorld)world).getLogicalHeight() - 1);
+            double f = target.getZ() + (target.getRandom().nextDouble() - (double)0.5F) * (double) diameter;
+            if (target.hasVehicle()) {
+                target.stopRiding();
             }
 
-            Vec3d vec3d = user.getPos();
-            Selection<Entry<ClaimBox, Claim>> claims = ClaimUtils.getClaimsAt(world, new BlockPos((int) d, (int) e, (int) f));
-            if (claims.isNotEmpty()) {
-                continue;
+            Vec3d vec3d = target.getPos();
+            Selection<Entry<ClaimBox, Claim>> interactingClaims = ClaimUtils.getClaimsAt(world, new BlockPos((int) d, (int) e, (int) f));
+            if (interactingClaims.isNotEmpty()) {
+                if ((!ClaimUtils.canDamageEntity(world, target, world.getDamageSources().mobAttack(source)))) {
+                    continue;
+                }
             }
-            if (user.teleport(d, e, f, true)) {
-                world.emitGameEvent(GameEvent.TELEPORT, vec3d, GameEvent.Emitter.of(user));
+            if (target.teleport(d, e, f, true)) {
+                world.emitGameEvent(GameEvent.TELEPORT, vec3d, GameEvent.Emitter.of(target));
                 SoundCategory soundCategory;
                 SoundEvent soundEvent;
-                if (user instanceof FoxEntity) {
+                if (target instanceof FoxEntity) {
                     soundEvent = SoundEvents.ENTITY_FOX_TELEPORT;
                     soundCategory = SoundCategory.NEUTRAL;
                 } else {
@@ -151,17 +153,18 @@ public class InstabilityStatusEffect extends InstantStatusEffect implements Poly
                     soundCategory = SoundCategory.PLAYERS;
                 }
 
-                world.playSound(null, user.getX(), user.getY(), user.getZ(), soundEvent, soundCategory);
-                user.onLanding();
+                world.playSound(null, target.getX(), target.getY(), target.getZ(), soundEvent, soundCategory);
+                target.onLanding();
                 bl = true;
                 break;
             }
         }
-        user.playSound(SoundEvents.ENTITY_VILLAGER_NO);
 
-        if (bl && user instanceof PlayerEntity playerEntity) {
+        if (bl && target instanceof PlayerEntity playerEntity) {
             playerEntity.clearCurrentExplosion();
         }
         // return bl
     }
+
+
 }
