@@ -38,6 +38,8 @@ public class Recall implements ModInitializer {
     public static final String MOD_ID = "recall";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+    private static boolean GomlInstalled = true;
+
     // CONFIG VALUES
     public static final double TELEPORT_CHANCE = 0.25;
     public static final int TIME_TO_TP_TICKS = 100;
@@ -75,9 +77,22 @@ public class Recall implements ModInitializer {
         // However, some things (like resources) may still be uninitialized.
         // Proceed with mild caution.
 
-        LOGGER.info("Hello Fabric world!");
+        LOGGER.info("Loading Recall!");
         boolean valid = PolymerResourcePackUtils.addModAssets(MOD_ID);
         if (valid) LOGGER.info("Added Resources");
+
+        try {
+            Class.forName("draylar.goml.api.ClaimUtils");
+        } catch (ClassNotFoundException ex) {
+            GomlInstalled = false;
+        }
+
+        if (GomlInstalled) {
+            LOGGER.info("GOML-Reserved is installed, Recall will respect GOML claims.");
+        } else {
+            LOGGER.info("GOML-Reserved is not installed.");
+        }
+
 
         RegistryEntry<Potion> instability_entry = Registries.POTION.getEntry(INSTABILITY_POTION);
         RegistryEntry<Potion> strong_instability_entry = Registries.POTION.getEntry(STRONG_INSTABILITY_POTION);
@@ -144,8 +159,12 @@ public class Recall implements ModInitializer {
         });
     }
 
-
     public static Item register(Item item, RegistryKey<Item> registryKey) {
         return Registry.register(Registries.ITEM, registryKey.getValue(), item);
+    }
+
+    public static boolean IsGomlInstalled()
+    {
+        return GomlInstalled;
     }
 }

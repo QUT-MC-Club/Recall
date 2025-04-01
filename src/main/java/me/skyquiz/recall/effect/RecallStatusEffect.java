@@ -21,6 +21,7 @@ import net.minecraft.world.TeleportTarget;
 import xyz.nucleoid.packettweaker.PacketContext;
 
 
+
 public class RecallStatusEffect extends StatusEffect implements PolymerStatusEffect {
     private int timeLeft;
     private boolean active;
@@ -56,7 +57,6 @@ public class RecallStatusEffect extends StatusEffect implements PolymerStatusEff
             }
         }
 
-
         if (getTimeLeft() <= 1) {
             if (entity instanceof ServerPlayerEntity player) {
                 Random random = Random.create();
@@ -71,16 +71,19 @@ public class RecallStatusEffect extends StatusEffect implements PolymerStatusEff
                     return true;
                 }
 
-                BlockPos home = player.getSpawnPointPosition();
-                ServerWorld homeWorld = world.getServer().getWorld(player.getSpawnPointDimension());
+                // Getting respawn position and world to send home
+                ServerPlayerEntity.Respawn respawn = player.getRespawn();
 
-                if (home == null) home = player.getServerWorld().getSpawnPos();
-
-                if (homeWorld == null) homeWorld = world.getServer().getWorld(player.getServerWorld().getRegistryKey());
-                if (!(homeWorld instanceof ServerWorld)) return false;
+                BlockPos home = null;
+                ServerWorld homeWorld = null;
+                if (respawn == null) {
+                    homeWorld = world;
+                } else {
+                    homeWorld = world.getServer().getWorld(respawn.dimension());
+                }
+                home = player.getWorldSpawnPos(homeWorld, player.getBlockPos());
 
                 home = home.mutableCopy().add(0, 1, 0);
-
                 world.sendEntityStatus(player, (byte) 46);
                 TeleportTarget target = new TeleportTarget(
                         homeWorld,
@@ -105,7 +108,7 @@ public class RecallStatusEffect extends StatusEffect implements PolymerStatusEff
     }
 
     @Override
-    public StatusEffect getPolymerReplacement(PacketContext context)
+    public StatusEffect getPolymerReplacement(StatusEffect potion, PacketContext context)
     {
         if (context.getPlayer() == null) {
             Recall.LOGGER.info("Player not found");

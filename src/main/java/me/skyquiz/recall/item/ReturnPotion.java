@@ -10,7 +10,6 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -66,7 +65,7 @@ public class ReturnPotion extends SimplePolymerItem {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+    public void modifyClientTooltip(List<Text> tooltip, ItemStack stack, PacketContext context) {
         tooltip.add(Text.translatable("item.recall.return_potion.tooltip").formatted(Formatting.DARK_GRAY));
     }
 }

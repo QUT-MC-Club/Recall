@@ -1,10 +1,5 @@
 package me.skyquiz.recall.item;
 
-import com.jamieswhiteshirt.rtree3i.Entry;
-import com.jamieswhiteshirt.rtree3i.Selection;
-import draylar.goml.api.Claim;
-import draylar.goml.api.ClaimBox;
-import draylar.goml.api.ClaimUtils;
 import eu.pb4.polymer.core.api.item.SimplePolymerItem;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import me.skyquiz.recall.Recall;
@@ -13,18 +8,18 @@ import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.*;
-import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import xyz.nucleoid.packettweaker.PacketContext;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ReturnApple extends SimplePolymerItem {
     private static final FoodComponent RETURN_APPLE_COMPONENT = new FoodComponent.Builder()
@@ -64,7 +59,14 @@ public class ReturnApple extends SimplePolymerItem {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+    public Optional<TooltipData> getTooltipData(ItemStack stack) {
+
+        return super.getTooltipData(stack);
+    }
+
+    @Override
+    public void modifyClientTooltip(List<Text> tooltip, ItemStack stack, PacketContext context) {
         tooltip.add(Text.translatable("item.recall.return_apple.tooltip").formatted(Formatting.DARK_GRAY));
+        super.modifyClientTooltip(tooltip, stack, context);
     }
 }
