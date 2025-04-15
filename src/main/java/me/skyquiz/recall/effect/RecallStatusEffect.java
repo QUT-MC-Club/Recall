@@ -14,8 +14,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.TeleportTarget;
 import xyz.nucleoid.packettweaker.PacketContext;
@@ -71,31 +69,11 @@ public class RecallStatusEffect extends StatusEffect implements PolymerStatusEff
                     return true;
                 }
 
-                // Getting respawn position and world to send home
-                ServerPlayerEntity.Respawn respawn = player.getRespawn();
-
-                BlockPos home = null;
-                ServerWorld homeWorld = null;
-                if (respawn == null) {
-                    homeWorld = world;
-                } else {
-                    homeWorld = world.getServer().getWorld(respawn.dimension());
-                }
-                home = player.getWorldSpawnPos(homeWorld, player.getBlockPos());
-
-                home = home.mutableCopy().add(0, 1, 0);
                 world.sendEntityStatus(player, (byte) 46);
-                TeleportTarget target = new TeleportTarget(
-                        homeWorld,
-                        home.toCenterPos(),
-                        Vec3d.ZERO,
-                        player.getYaw(),
-                        player.getPitch(),
-                        TeleportTarget.SEND_TRAVEL_THROUGH_PORTAL_PACKET
-                );
                 player.fallDistance = 0;
+                TeleportTarget target = player.getRespawnTarget(true, TeleportTarget.SEND_TRAVEL_THROUGH_PORTAL_PACKET);
                 player.teleportTo(target);
-                homeWorld.sendEntityStatus(player, (byte) 46);
+                player.getServerWorld().sendEntityStatus(player, (byte) 46);
             }
         }
 
