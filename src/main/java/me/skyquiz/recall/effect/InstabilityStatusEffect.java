@@ -8,6 +8,7 @@ import draylar.goml.registry.GOMLBlocks;
 import eu.pb4.polymer.core.api.other.PolymerStatusEffect;
 import com.jamieswhiteshirt.rtree3i.Entry;
 import me.skyquiz.recall.Recall;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.InstantStatusEffect;
@@ -74,53 +75,59 @@ public class InstabilityStatusEffect extends InstantStatusEffect implements Poly
     }
 
     private boolean canEntityTeleport(ServerWorld world, LivingEntity target, LivingEntity attacker) {
-        var claimOdds = ClaimUtils.getClaimsAt(world, target.getBlockPos());
         AtomicBoolean permitted = new AtomicBoolean(false);
-        if (claimOdds.isEmpty()) { // Not within claim
-            permitted.set(true);
-        } else { // Within Claim
-            var testedClaim = claimOdds.filter((Entry<ClaimBox, Claim> claim) -> { // Test for specific claim hit was in
-                BlockPos pos = target.getBlockPos();
-                Box checkBox = Box.create(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
-                return claim.getKey().toBox().intersectionVolume(checkBox) == 1;
-            });
+        // test if goml is on server
+        if (FabricLoader.getInstance().isModLoaded("goml")) {
+            var claimOdds = ClaimUtils.getClaimsAt(world, target.getBlockPos());
+            if (claimOdds.isEmpty()) { // Not within claim
+                permitted.set(true);
+            } else { // Within Claim
+                var testedClaim = claimOdds.filter((Entry<ClaimBox, Claim> claim) -> { // Test for specific claim hit was in
+                    BlockPos pos = target.getBlockPos();
+                    Box checkBox = Box.create(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+                    return claim.getKey().toBox().intersectionVolume(checkBox) == 1;
+                });
 
-            // assume tested claim is one
-            testedClaim.forEach((claimBoxClaimEntry -> {
-                Claim claim = claimBoxClaimEntry.getValue();
-                Set<UUID> owners = claim.getOwners();
-                Set<UUID> trustedPlayers = claim.getTrusted();
+                // assume tested claim is one
+                testedClaim.forEach((claimBoxClaimEntry -> {
+                    Claim claim = claimBoxClaimEntry.getValue();
+                    Set<UUID> owners = claim.getOwners();
+                    Set<UUID> trustedPlayers = claim.getTrusted();
 
-                if (attacker instanceof PlayerEntity) { // Attacker is player
-                    if (owners.contains(attacker.getUuid()) || trustedPlayers.  contains(attacker.getUuid())) { // attacker is owner or trusted
-                        permitted.set(true);
-                        return;
-                    }
-                    if (target instanceof PlayerEntity) { // target is player
-                        if (attacker.getUuid().equals(target.getUuid())) { // self-cast
+                    if (attacker instanceof PlayerEntity) { // Attacker is player
+                        if (owners.contains(attacker.getUuid()) || trustedPlayers.contains(attacker.getUuid())) { // attacker is owner or trusted
                             permitted.set(true);
                             return;
                         }
-                        if (claim.hasAugment(GOMLBlocks.PVP_ARENA.getFirst())) { // claim has pvp-arena
-                            switch (claim.getData(GOMLBlocks.PVP_ARENA.getFirst().key)) {
-                                case EVERYONE -> permitted.set(true);
-                                case DISABLED -> permitted.set(false);
-                                case TRUSTED -> permitted.set(claim.hasPermission((PlayerEntity) attacker) && claim.hasPermission((PlayerEntity) target));
-                                case UNTRUSTED -> permitted.set(!claim.hasPermission((PlayerEntity) attacker) && !claim.hasPermission((PlayerEntity) target));
-                                case null, default -> throw new MatchException(null, null);
+                        if (target instanceof PlayerEntity) { // target is player
+                            if (attacker.getUuid().equals(target.getUuid())) { // self-cast
+                                permitted.set(true);
+                                return;
                             }
-                        } else { // claim does not have pvp arena
-                            permitted.set(GetOffMyLawn.CONFIG.enablePvPinClaims);
+                            if (claim.hasAugment(GOMLBlocks.PVP_ARENA.getFirst())) { // claim has pvp-arena
+                                switch (claim.getData(GOMLBlocks.PVP_ARENA.getFirst().key)) {
+                                    case EVERYONE -> permitted.set(true);
+                                    case DISABLED -> permitted.set(false);
+                                    case TRUSTED ->
+                                            permitted.set(claim.hasPermission((PlayerEntity) attacker) && claim.hasPermission((PlayerEntity) target));
+                                    case UNTRUSTED ->
+                                            permitted.set(!claim.hasPermission((PlayerEntity) attacker) && !claim.hasPermission((PlayerEntity) target));
+                                    case null, default -> throw new MatchException(null, null);
+                                }
+                            } else { // claim does not have pvp arena
+                                permitted.set(GetOffMyLawn.CONFIG.enablePvPinClaims);
+                            }
+                        } else { // target is non-player (animal, armor stand, etc...)
+                            permitted.set(false);
                         }
-                    } else { // target is non-player (animal, armor stand, etc...)
-                        permitted.set(false);
+                    } else { // Attacker is non-player (probably dispensers or witches, if one will choose to be evil)
+                        permitted.set(true);
                     }
-                } else { // Attacker is non-player (probably dispensers or witches, if one will choose to be evil)
-                    permitted.set(true);
-                }
-            }));
+                }));
+            }
+            return permitted.get();
         }
-        return permitted.get();
+        return true;
     }
 
     private void teleportEntitySafely(float diameter, World world, LivingEntity target, LivingEntity source) {
@@ -144,12 +151,15 @@ public class InstabilityStatusEffect extends InstantStatusEffect implements Poly
 //            }
 
 
-            Selection<Entry<ClaimBox, Claim>> interactingClaims = ClaimUtils.getClaimsAt(world, new BlockPos((int) d, (int) e, (int) f));
-            if (interactingClaims.isNotEmpty()) {
-                if ((!ClaimUtils.canDamageEntity(world, target, world.getDamageSources().mobAttack(source)))) {
-                    continue;
+            if (FabricLoader.getInstance().isModLoaded("goml")) {
+                Selection<Entry<ClaimBox, Claim>> interactingClaims = ClaimUtils.getClaimsAt(world, new BlockPos((int) d, (int) e, (int) f));
+                if (interactingClaims.isNotEmpty()) {
+                    if ((!ClaimUtils.canDamageEntity(world, target, world.getDamageSources().mobAttack(source)))) {
+                        continue;
+                    }
                 }
             }
+
             if (target.teleport(d, e, f, true)) {
                 world.emitGameEvent(GameEvent.TELEPORT, vec3d, GameEvent.Emitter.of(target));
                 SoundCategory soundCategory;
