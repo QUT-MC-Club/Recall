@@ -9,8 +9,10 @@ import me.skyquiz.recall.effect.InstabilityStatusEffect;
 import me.skyquiz.recall.item.ReturnApple;
 import me.skyquiz.recall.item.ReturnPotion;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.item.v1.ComponentTooltipAppenderRegistry;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
+import net.minecraft.component.ComponentType;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -56,6 +58,7 @@ public class Recall implements ModInitializer {
 
     public static final Potion INSTABILITY_POTION;
     public static final Potion STRONG_INSTABILITY_POTION;
+
 
     static {
         RECALL = Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "recall"), new RecallStatusEffect());

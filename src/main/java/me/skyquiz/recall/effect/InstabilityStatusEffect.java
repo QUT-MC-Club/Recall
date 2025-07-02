@@ -73,12 +73,6 @@ public class InstabilityStatusEffect extends InstantStatusEffect implements Poly
         }
     }
 
-    @Override
-    public StatusEffect getPolymerReplacement(PacketContext context) {
-        return null;
-    }
-
-
     private boolean canEntityTeleport(ServerWorld world, LivingEntity target, LivingEntity attacker) {
         var claimOdds = ClaimUtils.getClaimsAt(world, target.getBlockPos());
         AtomicBoolean permitted = new AtomicBoolean(false);
@@ -180,6 +174,4 @@ public class InstabilityStatusEffect extends InstantStatusEffect implements Poly
         }
         // return bl
     }
-
-
 }

@@ -65,11 +65,11 @@ dependencies {
 
     modImplementation include("eu.pb4:polymer-autohost:${project.polymer_version}")
 
-    modImplementation include("eu.pb4:polydex:1.4.1+1.21.4")
-    modCompileOnly include("maven.modrinth:vaulted-end:1.2.1")
+    modImplementation include("eu.pb4:polydex:${project.polydex_version}")
+    modCompileOnly include("maven.modrinth:vaulted-end:${project.vaulted_end_version}")
 
     modImplementation include("com.jamieswhiteshirt:rtree-3i-lite-fabric:0.3.0")
-    modCompileOnly include("maven.modrinth:goml-reserved:1.15.0+1.21.4-rc3")
+    modCompileOnly include("maven.modrinth:goml-reserved:${project.goml_version}")
 }
 
 processResources {

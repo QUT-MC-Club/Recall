@@ -3,6 +3,7 @@ package me.skyquiz.recall.effect;
 import eu.pb4.polymer.core.api.other.PolymerStatusEffect;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import me.skyquiz.recall.Recall;
+import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
@@ -18,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.TeleportTarget;
+import net.minecraft.world.dimension.NetherPortal;
 import xyz.nucleoid.packettweaker.PacketContext;
 
 
@@ -71,28 +73,11 @@ public class RecallStatusEffect extends StatusEffect implements PolymerStatusEff
                     return true;
                 }
 
-                BlockPos home = player.getSpawnPointPosition();
-                ServerWorld homeWorld = world.getServer().getWorld(player.getSpawnPointDimension());
+                TeleportTarget target = player.getRespawnTarget(true, TeleportTarget.NO_OP);
 
-                if (home == null) home = player.getServerWorld().getSpawnPos();
-
-                if (homeWorld == null) homeWorld = world.getServer().getWorld(player.getServerWorld().getRegistryKey());
-                if (!(homeWorld instanceof ServerWorld)) return false;
-
-                home = home.mutableCopy().add(0, 1, 0);
-
-                world.sendEntityStatus(player, (byte) 46);
-                TeleportTarget target = new TeleportTarget(
-                        homeWorld,
-                        home.toCenterPos(),
-                        Vec3d.ZERO,
-                        player.getYaw(),
-                        player.getPitch(),
-                        TeleportTarget.SEND_TRAVEL_THROUGH_PORTAL_PACKET
-                );
                 player.fallDistance = 0;
                 player.teleportTo(target);
-                homeWorld.sendEntityStatus(player, (byte) 46);
+                world.sendEntityStatus(player, (byte) 46);
             }
         }
 
@@ -102,20 +87,6 @@ public class RecallStatusEffect extends StatusEffect implements PolymerStatusEff
     @Override
     public void onEntityDamage(ServerWorld world, LivingEntity entity, int amplifier, DamageSource source, float amount) {
         if (entity.hasStatusEffect(Recall.RECALL)) active = false;
-    }
-
-    @Override
-    public StatusEffect getPolymerReplacement(PacketContext context)
-    {
-        if (context.getPlayer() == null) {
-            Recall.LOGGER.info("Player not found");
-            return StatusEffects.NAUSEA.value();
-        }
-        if (PolymerResourcePackUtils.hasPack(context.getPlayer(), context.getPlayer().getUuid())) {
-            return Recall.RECALL.value();
-        } else {
-            return StatusEffects.NAUSEA.value();
-        }
     }
 
     public int getTimeLeft() {

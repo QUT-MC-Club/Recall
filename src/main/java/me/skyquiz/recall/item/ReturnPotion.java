@@ -10,17 +10,12 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.minecraft.world.World;
 import xyz.nucleoid.packettweaker.PacketContext;
-
-import java.util.List;
 
 import static net.minecraft.item.Items.GLASS_BOTTLE;
 
@@ -63,10 +58,5 @@ public class ReturnPotion extends SimplePolymerItem {
             player.addStatusEffect(new StatusEffectInstance(Recall.RECALL, Recall.TIME_TO_TP_TICKS, 1));
         }
         return super.finishUsing(stack, world, user);
-    }
-
-    @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        tooltip.add(Text.translatable("item.recall.return_potion.tooltip").formatted(Formatting.DARK_GRAY));
     }
 }
