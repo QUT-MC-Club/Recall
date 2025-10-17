@@ -29,7 +29,7 @@ public class ReturnPotion extends SimplePolymerItem {
             .sound(SoundEvents.ITEM_HONEY_BOTTLE_DRINK)
             .build();
 
-    public ReturnPotion(Settings settings) {
+    public ReturnPotion(net.minecraft.item.Item.Settings settings) {
         super(settings
                 .maxCount(16)
                 .food(RETURN_POTION_COMPONENT, RETURN_POTION_CONSUMABLE_COMPONENT)

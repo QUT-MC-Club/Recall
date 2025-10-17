@@ -29,7 +29,7 @@ public class ReturnApple extends SimplePolymerItem {
 
 
 
-    public ReturnApple(Settings settings) {
+    public ReturnApple(net.minecraft.item.Item.Settings settings) {
         super(settings
                 .food(RETURN_APPLE_COMPONENT, RETURN_APPLE_CONSUMABLE_COMPONENT)
                 .rarity(Rarity.RARE)

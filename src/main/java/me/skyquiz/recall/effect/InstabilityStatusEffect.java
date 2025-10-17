@@ -141,7 +141,7 @@ public class InstabilityStatusEffect extends InstantStatusEffect implements Poly
                 target.stopRiding();
             }
 
-            Vec3d vec3d = target.getPos();
+            Vec3d vec3d = target.getBlockPos().toCenterPos();
 
 //            Selection<Entry<ClaimBox, Claim>> interactingClaimsOriginal = ClaimUtils.getClaimsAt(world, source.getBlockPos());
 //            if (interactingClaimsOriginal.isNotEmpty()) {

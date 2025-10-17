@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.10-SNAPSHOT'
+    id 'fabric-loom' version "${loom_version}"
     id 'maven-publish'
 }
 
@@ -27,9 +27,8 @@ repositories {
     // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html
     // for more information about repositories.
-
-    maven { url 'https://maven.nucleoid.xyz' } // You should have it
-
+    maven { url = "https://maven.fabricmc.net/" }
+    maven { url = "https://maven.nucleoid.xyz/" }
     maven { url = 'https://jitpack.io' }
 
     maven {
@@ -65,7 +64,7 @@ dependencies {
 
     modImplementation include("eu.pb4:polymer-autohost:${project.polymer_version}")
 
-    modImplementation include("eu.pb4:polydex:${project.polydex_version}")
+    modCompileOnly include("maven.modrinth:polydex:${project.polydex_version}")
     modCompileOnly include("maven.modrinth:vaulted-end:${project.vaulted_end_version}")
 
     modImplementation include("com.jamieswhiteshirt:rtree-3i-lite-fabric:0.3.0")
