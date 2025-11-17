@@ -9,10 +9,9 @@ import me.skyquiz.recall.effect.InstabilityStatusEffect;
 import me.skyquiz.recall.item.ReturnApple;
 import me.skyquiz.recall.item.ReturnPotion;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.item.v1.ComponentTooltipAppenderRegistry;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
-import net.minecraft.component.ComponentType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -38,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 public class Recall implements ModInitializer {
     public static final String MOD_ID = "recall";
-    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final Logger LOGGER = LoggerFactory.getLogger("Recall");
 
     // CONFIG VALUES
     public static final double TELEPORT_CHANCE = 0.25;
@@ -78,9 +77,8 @@ public class Recall implements ModInitializer {
         // However, some things (like resources) may still be uninitialized.
         // Proceed with mild caution.
 
-        LOGGER.info("Hello Fabric world!");
         boolean valid = PolymerResourcePackUtils.addModAssets(MOD_ID);
-        if (valid) LOGGER.info("Added Resources");
+        if (valid) LOGGER.info("Added Resources to Polymer");
 
         RegistryEntry<Potion> instability_entry = Registries.POTION.getEntry(INSTABILITY_POTION);
         RegistryEntry<Potion> strong_instability_entry = Registries.POTION.getEntry(STRONG_INSTABILITY_POTION);
@@ -105,8 +103,7 @@ public class Recall implements ModInitializer {
                 ));
 
 
-        // Get the event for modifying entries in the ingredients group.
-        // And register an event handler that adds our suspicious item to the ingredients group.
+        // Register items to custom group
         PolymerItemGroupUtils.registerPolymerItemGroup(Identifier.of(MOD_ID, "recall"), ItemGroup.create(ItemGroup.Row.BOTTOM, -1)
                 .icon(RETURN_APPLE::getDefaultStack)
                 .displayName(Text.translatable("itemgroup." + MOD_ID))
@@ -123,28 +120,28 @@ public class Recall implements ModInitializer {
                     entries.add(PotionContentsComponent.createStack(Items.TIPPED_ARROW, strong_instability_entry));
                 })).build());
 
+        // Add recall items to Vaulted End vaults, if the mod exists
+        if (FabricLoader.getInstance().isModLoaded(VaultedEnd.MOD_ID)) {
+            LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
+                if (key.getValue().equals(Identifier.of(VaultedEnd.MOD_ID, "vaults/normal/elytra"))) {
+                    LootPool.Builder poolBuilder = LootPool.builder()
+                            .rolls(ConstantLootNumberProvider.create(1))
+                            .with(ItemEntry.builder(RETURN_APPLE))
+                            .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0f, 4.0f)).build());
+                    tableBuilder.pool(poolBuilder);
+                }
+            });
 
-        LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
-            if (key.getValue().equals(Identifier.of(VaultedEnd.MOD_ID, "vaults/normal/elytra"))) {
-                // We make the pool and add an item
-                LootPool.Builder poolBuilder = LootPool.builder()
-                        .rolls(ConstantLootNumberProvider.create(1))
-                        .with(ItemEntry.builder(RETURN_APPLE))
-                        .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0f, 4.0f)).build());
-                tableBuilder.pool(poolBuilder);
-            }
-        });
-
-        LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
-            if (key.getValue().equals(Identifier.of(VaultedEnd.MOD_ID, "vaults/ominous/elytra"))) {
-                // We make the pool and add an item
-                LootPool.Builder poolBuilder = LootPool.builder()
-                                .rolls(ConstantLootNumberProvider.create(1))
-                                .with(ItemEntry.builder(RETURN_POTION))
-                                .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0f, 2.0f)).build());
-                tableBuilder.pool(poolBuilder);
-            }
-        });
+            LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
+                if (key.getValue().equals(Identifier.of(VaultedEnd.MOD_ID, "vaults/ominous/elytra"))) {
+                    LootPool.Builder poolBuilder = LootPool.builder()
+                            .rolls(ConstantLootNumberProvider.create(1))
+                            .with(ItemEntry.builder(RETURN_POTION))
+                            .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0f, 2.0f)).build());
+                    tableBuilder.pool(poolBuilder);
+                }
+            });
+        }
     }
 
 
